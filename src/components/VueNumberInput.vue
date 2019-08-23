@@ -1,8 +1,8 @@
 <template lang="html">
 	<div :class="[controlsType ? controlsType : '', 'vue-num-inp']">
-		<div class="button-up" @click="buttonHandler('up')">
-			<slot name="button-up">
-				<VueNumberInputButton type="'up'" />
+		<div class="button-down" @click="buttonHandler('down')">
+			<slot name="button-down">
+				<VueNumberInputButton type="'down'" />
 			</slot>
 		</div>
 		<input
@@ -12,7 +12,7 @@
 			@focus="addEventListeners"
 			@blur="removeEventListeners"
 		/>
-		<div class="button-up" @click="buttonHandler('down')">
+		<div class="button-up" @click="buttonHandler('up')">
 			<slot name="button-up">
 				<VueNumberInputButton type="'up'" />
 			</slot>
