@@ -1,5 +1,14 @@
 module.exports = {
-  plugins: {
-    autoprefixer: {}
-  }
+	plugins: {
+		autoprefixer: {},
+		'postcss-preset-env': {
+			stage: 2,
+			features: {
+				'nesting-rules': true,
+				'custom-properties': {
+					preserve: false
+				}
+			}
+		}
+	}
 };
