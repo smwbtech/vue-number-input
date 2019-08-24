@@ -101,8 +101,14 @@ export default {
 	},
 
 	methods: {
+		/**
+		 * Input Handler filter all valuex
+		 * except numbers and symbols '-' and '.'
+		 * @param  {Object} e - input event object
+		 * @return {undefinde}
+		 */
 		inputHandler(e) {
-			const numericPattern = /^\d*(\.\d*)$/i;
+			const numericPattern = /^-{0,1}\d*(\.\d*)*$/i;
 			const newValue = e.target.value;
 			if (!numericPattern.test(newValue)) e.target.value = this.value;
 			else this.makeStep(parseFloat(newValue));
