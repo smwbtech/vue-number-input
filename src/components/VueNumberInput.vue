@@ -348,7 +348,7 @@ export default {
 			// It is necessary to detect mouse / touchpad wheel event
 			// The first one will give deltaY >= 100, touchpad always start with small values,
 			// and then deltaY depends of touchpad scroll speed.
-			if (!this.firstDeltaY) this.firstDeltaY = e.deltaY;
+			if (!this.firstDeltaY) this.firstDeltaY = Math.abs(e.deltaY);
 			this.makeStep(this.nextStep);
 		},
 
