@@ -1,12 +1,46 @@
 {
-	"name": "vue-number-input",
+	"name": "@smartweb/vue-flash-message",
 	"version": "0.1.0",
+	"main": "./build/vue-flash-msg.common.js",
+	"files": [
+		"build/*",
+		"*.json",
+		"*.js"
+	],
+	"description": "Vue number input component with great accessibility: ARIA, control by keyboard and wheel",
+	"keywords": [
+		"vue",
+		"vuejs",
+		"input number",
+		"number input",
+		"vue number",
+		"vue numeric",
+		"vue number input",
+		"vue numeric input",
+		"vue accessibility",
+		"vue input accessibility"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/smwbtech/vue-number-input"
+	},
+	"homepage": "https://smwbtech.github.io/vue-flash-message/",
+	"bugs": {
+		"url": "https://github.com/smwbtech/vue-flash-message/issues"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Roman Privalov",
+		"email": "roman.privalov@gmail.com",
+		"url": "https://t.me/RomanPrivalov"
+	},
 	"private": true,
 	"scripts": {
 		"serve": "vue-cli-service serve",
 		"build": "vue-cli-service build",
 		"lint": "vue-cli-service lint",
-		"test:unit": "vue-cli-service test:unit"
+		"test:unit": "vue-cli-service test:unit",
+		"lib": "cross-env NODE_ENV=production vue-cli-service build --mode production -g envify --target lib --name vue-number-input ./src/components/VueNumberInput.vue --dest ./build"
 	},
 	"devDependencies": {
 		"@vue/cli-plugin-babel": "^3.11.0",
@@ -19,11 +53,13 @@
 		"babel-eslint": "^10.0.1",
 		"babel-jest": "^23.6.0",
 		"core-js": "^2.6.5",
+		"cross-env": "^5.2.0",
 		"eslint": "^5.16.0",
 		"eslint-plugin-prettier": "^3.1.0",
 		"eslint-plugin-vue": "^5.0.0",
 		"postcss-preset-env": "^6.7.0",
 		"prettier": "^1.18.2",
+		"terser-webpack-plugin": "^1.4.1",
 		"vue": "^2.6.10",
 		"vue-axe": "^1.0.7",
 		"vue-template-compiler": "^2.6.10"
