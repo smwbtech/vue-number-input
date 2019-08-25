@@ -21,10 +21,9 @@
 			role="spinbutton"
 			ref="number-input"
 			:placeholder="placeholder ? placeholder : ''"
-			:value="inputValue"
+			:value="value"
 			:class="[inputClasses.regular, inputClasses.userClass]"
 			@focus="addEventListeners"
-			@click.prevent="clickHandler"
 			@blur="removeEventListeners"
 			@input.prevent="inputHandler"
 		/>
@@ -49,7 +48,6 @@
 
 <script>
 import VueNumberInputButton from './VueNumberInputButton.vue';
-import { setCaretToPos } from '@/assets/js/caretPosition.js';
 
 export default {
 	components: {
@@ -86,14 +84,6 @@ export default {
 			default: 'on edges',
 			validator: str => ['on edges', 'left', 'right'].indexOf(str) !== -1
 		},
-		sign: {
-			type: String,
-			validator: str => /\s*/i.test(str)
-		},
-		signPosition: {
-			type: String,
-			validator: str => ['left', 'right'].indexOf(str) !== -1
-		},
 		inputClass: {
 			type: String
 		},
@@ -114,23 +104,6 @@ export default {
 			decreasePressed: false,
 			increasePressed: false
 		};
-	},
-
-	watch: {
-		value: function(newVal, oldVal) {
-			if (this.sign) {
-				const currentCaretPosition = this.$refs['number-input']
-					.selectionStart;
-				console.log(`currentCaretPosition: ${currentCaretPosition}`);
-				const caretPosition = `${newVal}`.length;
-				console.log(`caretPosition: ${caretPosition}`);
-				const signLength = `${this.sign}`.length;
-				console.log(`signLength: ${signLength}`);
-				const position = currentCaretPosition - (signLength + 1);
-				console.log(`position: ${position}`);
-				setCaretToPos(this.$refs['number-input'], 0);
-			}
-		}
 	},
 
 	computed: {
@@ -193,24 +166,6 @@ export default {
 				return this.currentDeltaY > 0
 					? this.value - this.step
 					: this.value + this.step;
-		},
-
-		/**
-		 * If user set props.sign and props.sighPosition
-		 * will return string with sign. If sign is undefined
-		 * will return prop.value
-		 * @return {String} - modificated string
-		 */
-		inputValue() {
-			if (this.sign) {
-				switch (this.signPosition) {
-					case 'left':
-						return `${this.sign} ${this.value}`;
-					case 'right':
-						return `${this.value} ${this.sign}`;
-				}
-			}
-			return this.value;
 		}
 	},
 
@@ -222,11 +177,7 @@ export default {
 		 * @return {undefined}
 		 */
 		inputHandler(e) {
-			const newValue = this.sign
-				? e.target.value.split(' ')[
-						this.sighPosition === 'left' ? 1 : 0
-				  ]
-				: e.target.value;
+			const newValue = e.target.value;
 			const numericPattern = /^-{0,1}\d*(\.\d*)*$/i;
 			if (!numericPattern.test(newValue)) e.target.value = this.value;
 			else this.makeStep(parseFloat(newValue));
@@ -293,10 +244,6 @@ export default {
 			this.$emit('focus', e);
 			e.target.addEventListener('wheel', this.wheelHandler);
 			e.target.addEventListener('keydown', this.keyDownHandler);
-		},
-
-		clickHandler(e) {
-			setCaretToPos(this.$refs['number-input'], 0);
 		},
 
 		/**
