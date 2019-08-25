@@ -26,14 +26,13 @@
 			name="number-input"
 			autocomplete="off"
 			aria-label="number input"
-			:autofocus="autofocus"
+			:autofocus="autofocus ? 'autofocus' : false"
 			:aria-valuenow="value"
 			:aria-valuemin="min"
 			:aria-valuemax="max"
 			:aria-disabled="`${disabled}`"
 			:disabled="disabled"
 			:readonly="readonly"
-			:placeholder="placeholder ? placeholder : ''"
 			:value="value"
 			:class="[
 				inputClasses.regular,
@@ -75,10 +74,6 @@ export default {
 	},
 
 	props: {
-		placeholder: {
-			type: String,
-			default: ''
-		},
 		value: {
 			type: Number,
 			default: 0
