@@ -19,10 +19,12 @@
 		<input
 			type="text"
 			role="spinbutton"
+			ref="number-input"
 			:placeholder="placeholder ? placeholder : ''"
 			:value="inputValue"
 			:class="[inputClasses.regular, inputClasses.userClass]"
 			@focus="addEventListeners"
+			@click.prevent="clickHandler"
 			@blur="removeEventListeners"
 			@input.prevent="inputHandler"
 		/>
@@ -47,6 +49,7 @@
 
 <script>
 import VueNumberInputButton from './VueNumberInputButton.vue';
+import { setCaretToPos } from '@/assets/js/caretPosition.js';
 
 export default {
 	components: {
@@ -111,6 +114,23 @@ export default {
 			decreasePressed: false,
 			increasePressed: false
 		};
+	},
+
+	watch: {
+		value: function(newVal, oldVal) {
+			if (this.sign) {
+				const currentCaretPosition = this.$refs['number-input']
+					.selectionStart;
+				console.log(`currentCaretPosition: ${currentCaretPosition}`);
+				const caretPosition = `${newVal}`.length;
+				console.log(`caretPosition: ${caretPosition}`);
+				const signLength = `${this.sign}`.length;
+				console.log(`signLength: ${signLength}`);
+				const position = currentCaretPosition - (signLength + 1);
+				console.log(`position: ${position}`);
+				setCaretToPos(this.$refs['number-input'], 0);
+			}
+		}
 	},
 
 	computed: {
@@ -211,6 +231,7 @@ export default {
 			if (!numericPattern.test(newValue)) e.target.value = this.value;
 			else this.makeStep(parseFloat(newValue));
 		},
+
 		/**
 		 * If button click once it will increase value
 		 * by the props.step. Else, if user hold the button
@@ -272,6 +293,10 @@ export default {
 			this.$emit('focus', e);
 			e.target.addEventListener('wheel', this.wheelHandler);
 			e.target.addEventListener('keydown', this.keyDownHandler);
+		},
+
+		clickHandler(e) {
+			setCaretToPos(this.$refs['number-input'], 0);
 		},
 
 		/**
