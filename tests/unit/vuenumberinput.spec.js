@@ -2,19 +2,23 @@ import { shallowMount } from '@vue/test-utils';
 import VueNumberInput from '@/components/VueNumberInput.vue';
 
 const defaultButtonStub = {
-	template: '<div class="btn-stab"></div>'
+	template: '<div class="btn-stub"></div>'
 };
 
 describe('Tests for VueNumberInput.vue component', () => {
-	let wrapper = shallowMount(VueNumberInput, {
-		stubs: {
-			VueNumberInputButton: defaultButtonStub
-		},
-		propsData: {
-			min: 0,
-			max: 10,
-			value: 2
-		}
+	let wrapper;
+
+	beforeEach(() => {
+		wrapper = shallowMount(VueNumberInput, {
+			stubs: {
+				VueNumberInputButton: defaultButtonStub
+			},
+			propsData: {
+				min: 0,
+				max: 10,
+				value: 2
+			}
+		});
 	});
 
 	it('Component should exists and should be instance of Vue class', () => {
@@ -125,5 +129,190 @@ describe('Tests for VueNumberInput.vue component', () => {
 				'test-user-class'
 			);
 		});
+
+		it('Component should have computed.nextStep, it should check the deltaY and decide what kind of controller (mouse wheel or touchpad) used and return value ± step', () => {
+			wrapper.setProps({ value: 2 });
+			// For wheel
+			wrapper.setData({ firstDeltaY: 100 });
+			expect(wrapper.vm.nextStep).toEqual(3);
+			// For touchpad
+			wrapper.setData({ firstDeltaY: 2 });
+			expect(wrapper.vm.nextStep).toEqual(1);
+		});
+	});
+
+	describe('Testing correct html rendering of the component', () => {
+		describe('Testing html render of div.vue-number-input', () => {
+			it('Should render div.vue-number-input', () => {
+				expect(wrapper.contains('div.vue-number-input')).toBeTruthy();
+			});
+
+			it('div.vue-number-input should add the modificator depending on props.controlsPosition', () => {
+				expect(
+					wrapper.contains('div.vue-number-input_on-edge')
+				).toBeTruthy();
+				wrapper.setProps({ controlsPosition: 'left' });
+				expect(
+					wrapper.contains('div.vue-number-input_on-left')
+				).toBeTruthy();
+				wrapper.setProps({ controlsPosition: 'right' });
+				expect(
+					wrapper.contains('div.vue-number-input_on-right')
+				).toBeTruthy();
+			});
+		});
+
+		describe('Testing html render of div.vue-number-input__btn-dec', () => {
+			it('Should render div.vue-number-input__btn-dec', () => {
+				expect(
+					wrapper.contains('div.vue-number-input__btn-dec')
+				).toBeTruthy();
+			});
+
+			it('"aria-disabled" attribute should be setting up depending on props.disabled and props.min', () => {
+				expect(
+					wrapper
+						.find('div.vue-number-input__btn-dec')
+						.attributes('aria-disabled')
+				).toBe('false');
+				wrapper.setProps({ value: 0 });
+				expect(
+					wrapper
+						.find('div.vue-number-input__btn-dec')
+						.attributes('aria-disabled')
+				).toBe('true');
+				wrapper.setProps({ value: 2 });
+				wrapper.setProps({ disabled: true });
+				expect(
+					wrapper
+						.find('div.vue-number-input__btn-dec')
+						.attributes('aria-disabled')
+				).toBe('true');
+			});
+
+			it('"vue-number-input__btn-dec_inactive" class should be added if props.disabled === true || props.value === props.min', () => {
+				wrapper.setProps({ value: 0 });
+				expect(
+					wrapper.contains('div.vue-number-input__btn-dec_inactive')
+				).toBeTruthy();
+				wrapper.setProps({ value: 2 });
+				wrapper.setProps({ disabled: true });
+				expect(
+					wrapper.contains('div.vue-number-input__btn-dec_inactive')
+				).toBeTruthy();
+			});
+
+			it('Element should have a custom class if user set props.buttonDecClass', () => {
+				wrapper.setProps({ buttonDecClass: 'test-custom-class' });
+				expect(
+					wrapper.contains(
+						'div.vue-number-input__btn-dec.test-custom-class'
+					)
+				).toBeTruthy();
+			});
+
+			it('Should have default elements in slots', () => {
+				expect(
+					wrapper.contains('div.vue-number-input__btn-dec .btn-stub')
+				).toBeTruthy();
+			});
+
+			it('Should render custom element in slot if user provide it', () => {
+				const customWrapper = shallowMount(VueNumberInput, {
+					slots: {
+						'button-decrease':
+							'<div class="custom-decrease-button"></div>'
+					}
+				});
+				expect(
+					customWrapper.contains('.custom-decrease-button')
+				).toBeTruthy();
+			});
+		});
+
+		describe('Testing html render of div.vue-number-input__btn-inc', () => {
+			it('Should render div.vue-number-input__btn-inc', () => {
+				expect(
+					wrapper.contains('div.vue-number-input__btn-inc')
+				).toBeTruthy();
+			});
+
+			it('"aria-disabled" attribute should be setting up depending on props.disabled and props.max', () => {
+				expect(
+					wrapper
+						.find('div.vue-number-input__btn-inc')
+						.attributes('aria-disabled')
+				).toBe('false');
+				wrapper.setProps({ value: 10 });
+				expect(
+					wrapper
+						.find('div.vue-number-input__btn-inc')
+						.attributes('aria-disabled')
+				).toBe('true');
+				wrapper.setProps({ value: 2 });
+				wrapper.setProps({ disabled: true });
+				expect(
+					wrapper
+						.find('div.vue-number-input__btn-inc')
+						.attributes('aria-disabled')
+				).toBe('true');
+			});
+
+			it('"vue-number-input__btn-inc_inactive" class should be added if props.disabled === true || props.value === props.max', () => {
+				wrapper.setProps({ value: 10 });
+				expect(
+					wrapper.contains('div.vue-number-input__btn-inc_inactive')
+				).toBeTruthy();
+				wrapper.setProps({ value: 2 });
+				wrapper.setProps({ disabled: true });
+				expect(
+					wrapper.contains('div.vue-number-input__btn-inc_inactive')
+				).toBeTruthy();
+			});
+
+			it('Element should have a custom class if user set props.buttonIncClass', () => {
+				wrapper.setProps({ buttonIncClass: 'test-custom-class' });
+				expect(
+					wrapper.contains(
+						'div.vue-number-input__btn-inc.test-custom-class'
+					)
+				).toBeTruthy();
+			});
+
+			it('Should have default elements in slots', () => {
+				expect(
+					wrapper.contains('div.vue-number-input__btn-inc .btn-stub')
+				).toBeTruthy();
+			});
+
+			it('Should render custom element in slot if user provide it', () => {
+				const customWrapper = shallowMount(VueNumberInput, {
+					slots: {
+						'button-increase':
+							'<div class="custom-increase-button"></div>'
+					}
+				});
+				expect(
+					customWrapper.contains('.custom-increase-button')
+				).toBeTruthy();
+			});
+		});
+
+		// it('Should render div.vue-number-input__btn-inc and should add the modificator depending on props.disabled, props.readonly and props.buttonDecClass', () => {
+		// 	expect(
+		// 		wrapper.contains('div.vue-number-input__input')
+		// 	).toBeTruthy();
+		// 	expect(
+		// 		wrapper
+		// 			.find('div.div.vue-number-input__input')
+		// 			.attributes('autofocus')
+		// 	).toBe(undefined);
+		// 	wrapper.setProps({ autofocus: true });
+		// 	expect(
+		// 		wrapper
+		// 			.find('div.div.vue-number-input__input')
+		// 			.attributes('autofocus')
+		// 	).toBe('autofocus');
+		// });
 	});
 });
