@@ -48,7 +48,7 @@
 			tabindex="0"
 			role="button"
 			aria-label="increase"
-			:aria-disabled="`${value === max}`"
+			:aria-disabled="`${value === max || disabled}`"
 			:class="[
 				buttonIncClasses.regular,
 				buttonIncClasses.isActive,
