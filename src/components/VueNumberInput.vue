@@ -4,13 +4,16 @@
 			tabindex="0"
 			role="button"
 			aria-label="decrease"
+			:aria-disabled="`${this.value === this.min}`"
 			:class="[
 				buttonDownClasses.regular,
 				buttonDownClasses.isActive,
 				buttonDownClasses.userClass
 			]"
-			@mousedown.left="buttonDownHandler('dec')"
+			@mousedown.left="mousedownHandler('dec')"
 			@mouseup="buttonUpHandler"
+			@keydown.enter="decreaseButtonKeydown"
+			@keyup.enter="buttonUpHandler"
 		>
 			<slot name="button-down">
 				<VueNumberInputButton :type="'down'" />
@@ -20,6 +23,14 @@
 			type="text"
 			role="spinbutton"
 			ref="number-input"
+			name="number-input"
+			autocomplete="off"
+			aria-label="number input"
+			:autofocus="autofocus"
+			:aria-valuenow="this.value"
+			:aria-valuemin="this.min"
+			:aria-valuemax="this.max"
+			:aria-disabled="`${this.disabled}`"
 			:placeholder="placeholder ? placeholder : ''"
 			:value="value"
 			:class="[inputClasses.regular, inputClasses.userClass]"
@@ -31,13 +42,16 @@
 			tabindex="0"
 			role="button"
 			aria-label="increase"
+			:aria-disabled="`${this.value === this.max}`"
 			:class="[
 				buttonUpClasses.regular,
 				buttonUpClasses.isActive,
 				buttonUpClasses.userClass
 			]"
-			@mousedown.left="buttonDownHandler('inc')"
+			@mousedown.left="mousedownHandler('inc')"
 			@mouseup="buttonUpHandler"
+			@keydown.enter="increaseButtonKeydown"
+			@keyup.enter="buttonUpHandler"
 		>
 			<slot name="button-up">
 				<VueNumberInputButton :type="'up'" />
@@ -74,6 +88,14 @@ export default {
 		step: {
 			type: Number,
 			default: 1
+		},
+		disabled: {
+			type: Boolean,
+			default: false
+		},
+		autofocus: {
+			type: Boolean,
+			default: false
 		},
 		showColntrols: {
 			type: Boolean,
@@ -212,7 +234,9 @@ export default {
 		 * @param  {String} direction - 'up' or 'down'
 		 * @return {undefined}
 		 */
-		buttonDownHandler(direction) {
+		mousedownHandler(direction) {
+			// clear all previpus timeouts and intervals
+			this.buttonUpHandler();
 			this.mousePressed = true;
 			this.makeStep(
 				direction === 'inc'
@@ -269,7 +293,7 @@ export default {
 		},
 
 		/**
-		 * Will add wheel and keydown event listeners
+		 * Will remove wheel and keydown event listeners
 		 * when user focus goes out of the form
 		 * and emit blur event
 		 * @param {Object} e - blur event obect
@@ -280,6 +304,24 @@ export default {
 			this.currentDeltaY = undefined;
 			e.target.removeEventListener('wheel', this.wheelHandler);
 			e.target.removeEventListener('keydown', this.keyDownHandler);
+		},
+
+		/**
+		 * Enter button decrease handler
+		 * @param  {Object} e - event object
+		 * @return {undefined}
+		 */
+		decreaseButtonKeydown(e) {
+			this.mousedownHandler('dec');
+		},
+
+		/**
+		 * Enter button increase handler
+		 * @param  {Object} e - event object
+		 * @return {undefined}
+		 */
+		increaseButtonKeydown(e) {
+			this.mousedownHandler('inc');
 		},
 
 		/**
