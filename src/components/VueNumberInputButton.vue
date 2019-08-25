@@ -7,8 +7,10 @@
 <script>
 export default {
 	props: {
-		type: String,
-		required: true
+		type: {
+			type: String,
+			required: true
+		}
 	},
 
 	computed: {
