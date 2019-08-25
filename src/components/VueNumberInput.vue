@@ -1,5 +1,5 @@
 <template lang="html">
-	<div :class="[controlsType ? controlsType : '', 'vue-number-input']">
+	<div :class="[containerClasses.regular, containerClasses.type]">
 		<div
 			tabindex="0"
 			role="button"
@@ -79,7 +79,7 @@ export default {
 			type: Boolean,
 			default: true
 		},
-		controlsType: {
+		controlsPosition: {
 			type: String,
 			default: 'on edges',
 			validator: str => ['on edges', 'left', 'right'].indexOf(str) !== -1
@@ -107,6 +107,28 @@ export default {
 	},
 
 	computed: {
+		/**
+		 * Returns classes for container
+		 * @return {Object} - classes object
+		 */
+		containerClasses() {
+			let type;
+			switch (this.controlsPosition) {
+				case 'on edges':
+					type = 'vue-number-input_on-edge';
+					break;
+				case 'left':
+					type = 'vue-number-input_on-left';
+					break;
+				case 'right':
+					type = 'vue-number-input_on-right';
+					break;
+			}
+			return {
+				regular: 'vue-number-input',
+				type
+			};
+		},
 		/**
 		 * Returns classes for down button
 		 * @return {Object} - classes object
@@ -319,7 +341,6 @@ export default {
 
 	& .vue-number-input__btn-dec,
 	& .vue-number-input__btn-inc {
-		width: 15%;
 		background-color: #f7f7f7;
 		cursor: pointer;
 
@@ -329,6 +350,63 @@ export default {
 			background-color: #eee;
 		}
 	}
+
+	&.vue-number-input_on-edge {
+		& .vue-number-input__btn-dec,
+		& .vue-number-input__btn-inc {
+			width: 15%;
+		}
+	}
+
+	&.vue-number-input_on-left,
+	&.vue-number-input_on-right {
+		& .vue-number-input__input {
+			width: 80%;
+			padding: 20px 10px;
+		}
+		& .vue-number-input__btn-dec,
+		& .vue-number-input__btn-inc {
+			position: absolute;
+			height: 50%;
+			width: 20%;
+		}
+
+		& .vue-number-input__btn-dec {
+			bottom: 0;
+		}
+
+		& .vue-number-input__btn-inc {
+			top: 0;
+			border-bottom: 1px solid #eee;
+		}
+	}
+
+	&.vue-number-input_on-left {
+
+		& .vue-number-input__input {
+			margin-left: 20%;
+
+		}
+
+		& .vue-number-input__btn-dec,
+		& .vue-number-input__btn-inc {
+			left: 0;
+		}
+	}
+
+	&.vue-number-input_on-right {
+
+		& .vue-number-input__input {
+			margin-right: 20%;
+
+		}
+
+		& .vue-number-input__btn-dec,
+		& .vue-number-input__btn-inc {
+			right: 0;
+		}
+	}
+
 
 } /* end vue-num-inp*/
 </style>
