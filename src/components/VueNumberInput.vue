@@ -4,7 +4,7 @@
 			tabindex="0"
 			role="button"
 			aria-label="decrease"
-			:aria-disabled="`${this.value === this.min}`"
+			:aria-disabled="`${value === min || disabled}`"
 			:class="[
 				buttonDownClasses.regular,
 				buttonDownClasses.isActive,
@@ -27,13 +27,19 @@
 			autocomplete="off"
 			aria-label="number input"
 			:autofocus="autofocus"
-			:aria-valuenow="this.value"
-			:aria-valuemin="this.min"
-			:aria-valuemax="this.max"
-			:aria-disabled="`${this.disabled}`"
+			:aria-valuenow="value"
+			:aria-valuemin="min"
+			:aria-valuemax="max"
+			:aria-disabled="`${disabled}`"
+			:disabled="disabled"
+			:readonly="readonly"
 			:placeholder="placeholder ? placeholder : ''"
 			:value="value"
-			:class="[inputClasses.regular, inputClasses.userClass]"
+			:class="[
+				inputClasses.regular,
+				inputClasses.isActive,
+				inputClasses.userClass
+			]"
 			@focus="addEventListeners"
 			@blur="removeEventListeners"
 			@input.prevent="inputHandler"
@@ -42,7 +48,7 @@
 			tabindex="0"
 			role="button"
 			aria-label="increase"
-			:aria-disabled="`${this.value === this.max}`"
+			:aria-disabled="`${value === max}`"
 			:class="[
 				buttonUpClasses.regular,
 				buttonUpClasses.isActive,
@@ -159,7 +165,7 @@ export default {
 			return {
 				regular: 'vue-number-input__btn-dec',
 				isActive:
-					this.value === this.min
+					this.value === this.min || this.disabled
 						? 'vue-number-input__btn-dec_inactive'
 						: '',
 				userClass: this.buttonDownClass
@@ -174,7 +180,7 @@ export default {
 			return {
 				regular: 'vue-number-input__btn-inc',
 				isActive:
-					this.value === this.max
+					this.value === this.max || this.disabled
 						? 'vue-number-input__btn-inc_inactive'
 						: '',
 				userClass: this.buttonUpClass
@@ -188,6 +194,9 @@ export default {
 		inputClasses() {
 			return {
 				regular: 'vue-number-input__input',
+				isActive: this.disabled
+					? 'vue-number-input__input_disabled'
+					: '',
 				userClass: this.inputClass
 			};
 		},
@@ -275,7 +284,7 @@ export default {
 		 * @return {undefined}
 		 */
 		makeStep(val) {
-			if (val >= this.min && val <= this.max) {
+			if (val >= this.min && val <= this.max && !this.disabled) {
 				this.$emit('input', val);
 			}
 		},
@@ -311,7 +320,7 @@ export default {
 		 * @param  {Object} e - event object
 		 * @return {undefined}
 		 */
-		decreaseButtonKeydown(e) {
+		decreaseButtonKeydown() {
 			this.mousedownHandler('dec');
 		},
 
@@ -320,7 +329,7 @@ export default {
 		 * @param  {Object} e - event object
 		 * @return {undefined}
 		 */
-		increaseButtonKeydown(e) {
+		increaseButtonKeydown() {
 			this.mousedownHandler('inc');
 		},
 
@@ -379,6 +388,11 @@ export default {
 		border: none;
 		width: 70%;
 		padding: 10px;
+
+		&.vue-number-input__input_disabled {
+			background-color: #f7f7f7;
+			cursor: not-allowed;
+		}
 	}
 
 	& .vue-number-input__btn-dec,
