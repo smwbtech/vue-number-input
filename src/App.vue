@@ -1,6 +1,13 @@
 <template>
 	<div id="app">
-		<VueNumberInput v-model="value" />
+		<VueNumberInput
+			v-model="value"
+			:sign="'°'"
+			:signPosition="'right'"
+			:min="0"
+			:max="360"
+			class="input-block"
+		/>
 	</div>
 </template>
 
@@ -28,5 +35,9 @@ export default {
 	text-align: center;
 	color: #2c3e50;
 	margin-top: 60px;
+
+	& .input-block {
+		width: 30%;
+	}
 }
 </style>
