@@ -6,9 +6,9 @@
 			aria-label="decrease"
 			:aria-disabled="`${value === min || disabled}`"
 			:class="[
-				buttonDownClasses.regular,
-				buttonDownClasses.isActive,
-				buttonDownClasses.userClass
+				buttonDecClasses.regular,
+				buttonDecClasses.isActive,
+				buttonDecClasses.userClass
 			]"
 			@mousedown.left="mousedownHandler('dec')"
 			@mouseup="buttonUpHandler"
@@ -50,9 +50,9 @@
 			aria-label="increase"
 			:aria-disabled="`${value === max}`"
 			:class="[
-				buttonUpClasses.regular,
-				buttonUpClasses.isActive,
-				buttonUpClasses.userClass
+				buttonIncClasses.regular,
+				buttonIncClasses.isActive,
+				buttonIncClasses.userClass
 			]"
 			@mousedown.left="mousedownHandler('inc')"
 			@mouseup="buttonUpHandler"
@@ -99,6 +99,10 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		readonly: {
+			type: Boolean,
+			default: false
+		},
 		autofocus: {
 			type: Boolean,
 			default: false
@@ -115,10 +119,10 @@ export default {
 		inputClass: {
 			type: String
 		},
-		buttonUpClass: {
+		buttonIncClass: {
 			type: String
 		},
-		buttonDownClass: {
+		buttonDecClass: {
 			type: String
 		}
 	},
@@ -127,10 +131,8 @@ export default {
 		return {
 			firstDeltaY: undefined,
 			currentDeltaY: undefined,
-			timeoutId: true,
-			indervalId: undefined,
-			decreasePressed: false,
-			increasePressed: false
+			timeoutId: undefined,
+			intervalId: undefined
 		};
 	},
 
@@ -161,14 +163,14 @@ export default {
 		 * Returns classes for down button
 		 * @return {Object} - classes object
 		 */
-		buttonDownClasses() {
+		buttonDecClasses() {
 			return {
 				regular: 'vue-number-input__btn-dec',
 				isActive:
 					this.value === this.min || this.disabled
 						? 'vue-number-input__btn-dec_inactive'
 						: '',
-				userClass: this.buttonDownClass
+				userClass: this.buttonDecClass
 			};
 		},
 
@@ -176,14 +178,14 @@ export default {
 		 * Returns classes for up button
 		 * @return {Object} - classes object
 		 */
-		buttonUpClasses() {
+		buttonIncClasses() {
 			return {
 				regular: 'vue-number-input__btn-inc',
 				isActive:
 					this.value === this.max || this.disabled
 						? 'vue-number-input__btn-inc_inactive'
 						: '',
-				userClass: this.buttonUpClass
+				userClass: this.buttonIncClass
 			};
 		},
 
