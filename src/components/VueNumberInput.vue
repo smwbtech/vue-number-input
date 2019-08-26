@@ -10,9 +10,9 @@
 				buttonDecClasses.isActive,
 				buttonDecClasses.userClass
 			]"
-			@mousedown.left="mousedownHandler('dec')"
+			@mousedown.left="buttonDownHandler('dec')"
 			@mouseup="buttonUpHandler"
-			@keydown.enter="decreaseButtonKeydown"
+			@keydown.enter="buttonDownHandler('dec')"
 			@keyup.enter="buttonUpHandler"
 		>
 			<slot name="button-decrease">
@@ -53,9 +53,9 @@
 				buttonIncClasses.isActive,
 				buttonIncClasses.userClass
 			]"
-			@mousedown.left="mousedownHandler('inc')"
+			@mousedown.left="buttonDownHandler('inc')"
 			@mouseup="buttonUpHandler"
-			@keydown.enter="increaseButtonKeydown"
+			@keydown.enter="buttonDownHandler('inc')"
 			@keyup.enter="buttonUpHandler"
 		>
 			<slot name="button-increase">
@@ -240,10 +240,9 @@ export default {
 		 * @param  {String} direction - 'up' or 'down'
 		 * @return {undefined}
 		 */
-		mousedownHandler(direction) {
+		buttonDownHandler(direction) {
 			// clear all previpus timeouts and intervals
 			this.buttonUpHandler();
-			this.mousePressed = true;
 			this.makeStep(
 				direction === 'inc'
 					? this.value + this.step
@@ -311,25 +310,6 @@ export default {
 			e.target.removeEventListener('wheel', this.wheelHandler);
 			e.target.removeEventListener('keydown', this.keyDownHandler);
 		},
-
-		/**
-		 * Enter button decrease handler
-		 * @param  {Object} e - event object
-		 * @return {undefined}
-		 */
-		decreaseButtonKeydown() {
-			this.mousedownHandler('dec');
-		},
-
-		/**
-		 * Enter button increase handler
-		 * @param  {Object} e - event object
-		 * @return {undefined}
-		 */
-		increaseButtonKeydown() {
-			this.mousedownHandler('inc');
-		},
-
 		/**
 		 * Event handler for wheel event,
 		 * when input is in fouce,Will increase
