@@ -8,3 +8,8 @@ script:
     - npm run test:unit
 after_script:
     - cat ./coverage/lcov.info | coveralls
+deploy:
+    provider: script
+    script: deploy.sh
+    on:
+        branch: master
