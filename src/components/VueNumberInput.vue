@@ -226,7 +226,7 @@ export default {
 			const newValue = e.target.value;
 			const numericPattern = /^-{0,1}\d*(\.\d*)*$/i;
 			if (!numericPattern.test(newValue)) e.target.value = this.value;
-			else this.makeStep(parseFloat(newValue));
+			else this.makeStep(newValue);
 		},
 
 		/**
@@ -276,6 +276,8 @@ export default {
 		 * @return {undefined}
 		 */
 		makeStep(val) {
+			val = parseFloat(val);
+			val = val % 1 === 0 ? val : parseFloat(val.toFixed(2));
 			if (val >= this.min && val <= this.max && !this.disabled) {
 				this.$emit('input', val);
 			}
