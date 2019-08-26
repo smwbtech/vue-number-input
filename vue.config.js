@@ -7,7 +7,5 @@ module.exports = {
 	configureWebpack: {
 		mode: 'production',
 		plugins: [new TerserPlugin()]
-	},
-	publicPath:
-		process.env.NODE_ENV === 'production' ? '/vue-number-input/' : '/'
+	}
 };
