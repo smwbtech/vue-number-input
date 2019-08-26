@@ -12,4 +12,10 @@ describe('Tests for VueNumberInput.vue component', () => {
 		expect(wrapper.exists()).toBeTruthy();
 		expect(wrapper.isVueInstance()).toBeTruthy();
 	});
+
+	describe('Testing "data" and "computed" properties of component', () => {
+		expect(wrapper.vm.content).toBe('+');
+		wrapper.setProps({ type: 'dec' });
+		expect(wrapper.vm.content).toBe('–');
+	});
 });
