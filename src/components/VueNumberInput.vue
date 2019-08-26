@@ -192,7 +192,7 @@ export default {
 			return {
 				regular: 'vue-number-input__input',
 				isActive: this.disabled
-					? 'vue-number-input__input_disabled'
+					? 'vue-number-input__input_inactive'
 					: '',
 				userClass: this.inputClass
 			};
@@ -386,7 +386,7 @@ export default {
 		width: 70%;
 		padding: 10px;
 
-		&.vue-number-input__input_disabled {
+		&.vue-number-input__input_inactive {
 			background-color: #f7f7f7;
 			cursor: not-allowed;
 		}
