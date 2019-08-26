@@ -1,5 +1,11 @@
 <template lang="html">
-	<div :class="[containerClasses.regular, containerClasses.type]">
+	<div
+		:class="[
+			containerClasses.regular,
+			containerClasses.isActive,
+			containerClasses.type
+		]"
+	>
 		<div
 			tabindex="0"
 			role="button"
@@ -10,13 +16,13 @@
 				buttonDecClasses.isActive,
 				buttonDecClasses.userClass
 			]"
-			@mousedown.left="mousedownHandler('dec')"
+			@mousedown.left="buttonDownHandler('dec')"
 			@mouseup="buttonUpHandler"
-			@keydown.enter="decreaseButtonKeydown"
+			@keydown.enter="buttonDownHandler('dec')"
 			@keyup.enter="buttonUpHandler"
 		>
 			<slot name="button-decrease">
-				<VueNumberInputButton :type="'down'" />
+				<VueNumberInputButton :type="'dec'" />
 			</slot>
 		</div>
 		<input
@@ -24,7 +30,7 @@
 			role="spinbutton"
 			ref="number-input"
 			name="number-input"
-			autocomplete="off"
+			autocomplete="nope"
 			aria-label="number input"
 			:autofocus="autofocus ? 'autofocus' : false"
 			:aria-valuenow="value"
@@ -53,13 +59,13 @@
 				buttonIncClasses.isActive,
 				buttonIncClasses.userClass
 			]"
-			@mousedown.left="mousedownHandler('inc')"
+			@mousedown.left="buttonDownHandler('inc')"
 			@mouseup="buttonUpHandler"
-			@keydown.enter="increaseButtonKeydown"
+			@keydown.enter="buttonDownHandler('inc')"
 			@keyup.enter="buttonUpHandler"
 		>
 			<slot name="button-increase">
-				<VueNumberInputButton :type="'up'" />
+				<VueNumberInputButton :type="'inc'" />
 			</slot>
 		</div>
 	</div>
@@ -101,10 +107,6 @@ export default {
 		autofocus: {
 			type: Boolean,
 			default: false
-		},
-		showColntrols: {
-			type: Boolean,
-			default: true
 		},
 		controlsPosition: {
 			type: String,
@@ -151,6 +153,7 @@ export default {
 			}
 			return {
 				regular: 'vue-number-input',
+				isActive: this.disabled ? 'vue-number-input_inactive' : '',
 				type
 			};
 		},
@@ -192,7 +195,7 @@ export default {
 			return {
 				regular: 'vue-number-input__input',
 				isActive: this.disabled
-					? 'vue-number-input__input_disabled'
+					? 'vue-number-input__input_inactive'
 					: '',
 				userClass: this.inputClass
 			};
@@ -230,7 +233,7 @@ export default {
 			const newValue = e.target.value;
 			const numericPattern = /^-{0,1}\d*(\.\d*)*$/i;
 			if (!numericPattern.test(newValue)) e.target.value = this.value;
-			else this.makeStep(parseFloat(newValue));
+			else this.makeStep(newValue);
 		},
 
 		/**
@@ -240,10 +243,9 @@ export default {
 		 * @param  {String} direction - 'up' or 'down'
 		 * @return {undefined}
 		 */
-		mousedownHandler(direction) {
+		buttonDownHandler(direction) {
 			// clear all previpus timeouts and intervals
 			this.buttonUpHandler();
-			this.mousePressed = true;
 			this.makeStep(
 				direction === 'inc'
 					? this.value + this.step
@@ -281,6 +283,8 @@ export default {
 		 * @return {undefined}
 		 */
 		makeStep(val) {
+			val = parseFloat(val);
+			val = val % 1 === 0 ? val : parseFloat(val.toFixed(2));
 			if (val >= this.min && val <= this.max && !this.disabled) {
 				this.$emit('input', val);
 			}
@@ -311,25 +315,6 @@ export default {
 			e.target.removeEventListener('wheel', this.wheelHandler);
 			e.target.removeEventListener('keydown', this.keyDownHandler);
 		},
-
-		/**
-		 * Enter button decrease handler
-		 * @param  {Object} e - event object
-		 * @return {undefined}
-		 */
-		decreaseButtonKeydown() {
-			this.mousedownHandler('dec');
-		},
-
-		/**
-		 * Enter button increase handler
-		 * @param  {Object} e - event object
-		 * @return {undefined}
-		 */
-		increaseButtonKeydown() {
-			this.mousedownHandler('inc');
-		},
-
 		/**
 		 * Event handler for wheel event,
 		 * when input is in fouce,Will increase
@@ -344,7 +329,7 @@ export default {
 			// The first one will give deltaY >= 100, touchpad always start with small values,
 			// and then deltaY depends of touchpad scroll speed.
 			if (!this.firstDeltaY) this.firstDeltaY = Math.abs(e.deltaY);
-			this.makeStep(this.nextStep);
+			!this.readonly ? this.makeStep(this.nextStep) : false;
 		},
 
 		/**
@@ -357,10 +342,10 @@ export default {
 		keyDownHandler(e) {
 			switch (e.keyCode) {
 				case 38:
-					this.makeStep(this.value + this.step);
+					if (!this.readonly) this.makeStep(this.value + this.step);
 					break;
 				case 40:
-					this.makeStep(this.value - this.step);
+					if (!this.readonly) this.makeStep(this.value - this.step);
 					break;
 				default:
 					return false;
@@ -381,12 +366,16 @@ export default {
 	padding: 0px;
 	border-radius: 5px;
 
+	&.vue-number-input_inactive {
+		background-color: #f7f7f7;
+	}
+
 	& .vue-number-input__input {
 		border: none;
 		width: 70%;
 		padding: 10px;
 
-		&.vue-number-input__input_disabled {
+		&.vue-number-input__input_inactive {
 			background-color: #f7f7f7;
 			cursor: not-allowed;
 		}

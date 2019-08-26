@@ -15,7 +15,7 @@ export default {
 
 	computed: {
 		content() {
-			return this.type === 'up' ? '+' : '–';
+			return this.type === 'inc' ? '+' : '–';
 		}
 	}
 };
@@ -37,6 +37,7 @@ export default {
 
 	& .vue-number-input-btn__symbol {
 		display: block;
+		text-align: center;
 		margin: 0 auto;
 		padding: 15px 0px;
 		width: 100%;

@@ -1,6 +1,8 @@
 import { shallowMount } from '@vue/test-utils';
 import VueNumberInput from '@/components/VueNumberInput.vue';
 
+jest.useFakeTimers();
+
 const defaultButtonStub = {
 	template: '<div class="btn-stub"></div>'
 };
@@ -121,7 +123,7 @@ describe('Tests for VueNumberInput.vue component', () => {
 			expect(wrapper.vm.inputClasses.isActive).toEqual('');
 			wrapper.setProps({ disabled: true });
 			expect(wrapper.vm.inputClasses.isActive).toEqual(
-				'vue-number-input__input_disabled'
+				'vue-number-input__input_inactive'
 			);
 			wrapper.setProps({ disabled: false });
 			wrapper.setProps({ inputClass: 'test-user-class' });
@@ -134,10 +136,167 @@ describe('Tests for VueNumberInput.vue component', () => {
 			wrapper.setProps({ value: 2 });
 			// For wheel
 			wrapper.setData({ firstDeltaY: 100 });
+			wrapper.setData({ currentDeltaY: 100 });
+			expect(wrapper.vm.nextStep).toEqual(1);
+			wrapper.setData({ currentDeltaY: -100 });
 			expect(wrapper.vm.nextStep).toEqual(3);
 			// For touchpad
 			wrapper.setData({ firstDeltaY: 2 });
+			wrapper.setData({ currentDeltaY: -2 });
 			expect(wrapper.vm.nextStep).toEqual(1);
+			wrapper.setData({ currentDeltaY: 2 });
+			expect(wrapper.vm.nextStep).toEqual(3);
+		});
+	});
+
+	describe('Testing components methods', () => {
+		it('Component should have inputHandler method and it should check input value, and if it is number, invoke methods.makeStep', () => {
+			const correct = {
+				target: {
+					value: '8'
+				}
+			};
+			const wrong = {
+				target: {
+					value: 'adsad'
+				}
+			};
+			wrapper.setMethods({ makeStep: jest.fn() });
+			expect(typeof wrapper.vm.inputHandler).toBe('function');
+			wrapper.vm.inputHandler(wrong);
+			expect(wrapper.vm.makeStep).not.toHaveBeenCalled();
+			wrapper.vm.inputHandler(correct);
+			expect(wrapper.vm.makeStep).lastCalledWith('8');
+		});
+
+		it('Component should have buttonDownHandler method and it should invoke methods.buttonUpHandler, methods.makeStep, setTimeoutout and setInterval methods', () => {
+			wrapper.setMethods({
+				makeStep: jest.fn(),
+				buttonUpHandler: jest.fn()
+			});
+			expect(wrapper.vm.timeoutId).toBeUndefined();
+			expect(wrapper.vm.intervalId).toBeUndefined();
+			expect(typeof wrapper.vm.buttonDownHandler).toBe('function');
+			wrapper.vm.buttonDownHandler('inc');
+			expect(wrapper.vm.makeStep).lastCalledWith(3);
+			expect(wrapper.vm.buttonUpHandler).toHaveBeenCalledTimes(1);
+			expect(setTimeout).toHaveBeenCalledTimes(1);
+			expect(setInterval).toHaveBeenCalledTimes(1);
+			expect(typeof wrapper.vm.timeoutId).toBe('number');
+			expect(typeof wrapper.vm.intervalId).toBe('number');
+			wrapper.vm.buttonDownHandler('dec');
+			expect(wrapper.vm.makeStep).lastCalledWith(1);
+			expect(wrapper.vm.buttonUpHandler).toHaveBeenCalledTimes(2);
+			expect(setTimeout).toHaveBeenCalledTimes(2);
+			expect(setInterval).toHaveBeenCalledTimes(2);
+			setInterval.mockClear();
+			setTimeout.mockClear();
+		});
+
+		it('Component should have buttonUpHandler method and it should invoke clearTimeout and clearInterval', () => {
+			wrapper.setData({ intervalId: 1, timeoutId: 2 });
+			expect(typeof wrapper.vm.buttonUpHandler).toBe('function');
+			wrapper.vm.buttonUpHandler();
+			expect(clearInterval).lastCalledWith(1);
+			expect(clearTimeout).lastCalledWith(2);
+		});
+
+		it('Component should have makeStep method and it should emmit "input event" if props.min <= value <= props.max && props.disabled === false', () => {
+			expect(typeof wrapper.vm.makeStep).toBe('function');
+			wrapper.vm.makeStep('-1');
+			expect(wrapper.emitted('input')).toBeFalsy();
+			wrapper.vm.makeStep('11');
+			expect(wrapper.emitted('input')).toBeFalsy();
+			wrapper.setProps({ disabled: true });
+			wrapper.vm.makeStep('8');
+			expect(wrapper.emitted('input')).toBeFalsy();
+			wrapper.setProps({ disabled: false });
+			wrapper.vm.makeStep('8');
+			expect(wrapper.emitted('input')[0][0]).toBe(8);
+		});
+
+		it('makeStep method shoul round float numbers to 2 decimals', () => {
+			wrapper.vm.makeStep('4.4300234');
+			expect(wrapper.emitted('input')[0][0]).toBe(4.43);
+		});
+
+		it('Component should have addEventListeners method and it shoud emmit "focus" event and addEventListener for "wheel" and "keydown" events', () => {
+			const event = {
+				target: {
+					addEventListener: jest.fn()
+				}
+			};
+			expect(typeof wrapper.vm.addEventListeners).toBe('function');
+			wrapper.vm.addEventListeners(event);
+			expect(wrapper.emitted('focus')).toBeTruthy();
+			expect(event.target.addEventListener).toHaveBeenCalledWith(
+				'wheel',
+				wrapper.vm.wheelHandler
+			);
+			expect(event.target.addEventListener).toHaveBeenCalledWith(
+				'keydown',
+				wrapper.vm.keyDownHandler
+			);
+		});
+
+		it('Component should have removeEventListeners method and it shoud emmit "blur" event, reset data.deltaY and data.firstDeltaY properties, removeEventListener from "wheel" and "keydown" events', () => {
+			const event = {
+				target: {
+					removeEventListener: jest.fn()
+				}
+			};
+			wrapper.setData({ firstDeltaY: 1, deltaY: 3 });
+			expect(typeof wrapper.vm.removeEventListeners).toBe('function');
+			wrapper.vm.removeEventListeners(event);
+			expect(wrapper.vm.firstDeltaY).toBeUndefined();
+			expect(wrapper.vm.deltaY).toBeUndefined();
+			expect(wrapper.emitted('blur')).toBeTruthy();
+			expect(event.target.removeEventListener).toHaveBeenCalledWith(
+				'wheel',
+				wrapper.vm.wheelHandler
+			);
+			expect(event.target.removeEventListener).toHaveBeenCalledWith(
+				'keydown',
+				wrapper.vm.keyDownHandler
+			);
+		});
+
+		it('Component should have wheelHandler method and it should set data.deltaY, data.firstDeltaY and invoke methods.makeStep', () => {
+			const firstEvent = {
+				deltaY: 1,
+				preventDefault: jest.fn()
+			};
+			const secondEvent = {
+				deltaY: 3,
+				preventDefault: jest.fn()
+			};
+			wrapper.setMethods({
+				makeStep: jest.fn()
+			});
+			expect(typeof wrapper.vm.wheelHandler).toBe('function');
+			wrapper.vm.wheelHandler(firstEvent);
+			expect(wrapper.vm.firstDeltaY).toEqual(1);
+			expect(wrapper.vm.currentDeltaY).toEqual(1);
+			expect(wrapper.vm.makeStep).toHaveBeenCalledTimes(1);
+			expect(firstEvent.preventDefault).toHaveBeenCalled();
+			wrapper.vm.wheelHandler(secondEvent);
+			expect(wrapper.vm.firstDeltaY).toEqual(1);
+			expect(wrapper.vm.currentDeltaY).toEqual(3);
+			expect(wrapper.vm.makeStep).toHaveBeenCalledTimes(2);
+			expect(secondEvent.preventDefault).toHaveBeenCalled();
+		});
+
+		it('Component should have keyDownHandler method and it should invoke makeStep and decrease value, if user press arrow down key and decrease if arrow up', () => {
+			const arrowUp = { keyCode: 38 };
+			const arrowDown = { keyCode: 40 };
+			const enter = { keyCode: 13 };
+			wrapper.setMethods({ makeStep: jest.fn() });
+			expect(typeof wrapper.vm.keyDownHandler).toBe('function');
+			wrapper.vm.keyDownHandler(arrowUp);
+			expect(wrapper.vm.makeStep).lastCalledWith(3);
+			wrapper.vm.keyDownHandler(arrowDown);
+			expect(wrapper.vm.makeStep).lastCalledWith(1);
+			expect(wrapper.vm.keyDownHandler(enter)).toBeFalsy();
 		});
 	});
 
@@ -298,21 +457,155 @@ describe('Tests for VueNumberInput.vue component', () => {
 			});
 		});
 
-		// it('Should render div.vue-number-input__btn-inc and should add the modificator depending on props.disabled, props.readonly and props.buttonDecClass', () => {
-		// 	expect(
-		// 		wrapper.contains('div.vue-number-input__input')
-		// 	).toBeTruthy();
-		// 	expect(
-		// 		wrapper
-		// 			.find('div.div.vue-number-input__input')
-		// 			.attributes('autofocus')
-		// 	).toBe(undefined);
-		// 	wrapper.setProps({ autofocus: true });
-		// 	expect(
-		// 		wrapper
-		// 			.find('div.div.vue-number-input__input')
-		// 			.attributes('autofocus')
-		// 	).toBe('autofocus');
-		// });
+		describe('Testing html render of div.vue-number-input__input', () => {
+			it('Should render input.vue-number-input__input', () => {
+				expect(
+					wrapper.contains('input.vue-number-input__input')
+				).toBeTruthy();
+			});
+
+			it('"disabled" attribute should be setting up depending on props.disabled', () => {
+				expect(wrapper.contains('input:disabled')).toBeFalsy();
+				wrapper.setProps({ disabled: true });
+				expect(wrapper.contains('input:disabled')).toBeTruthy();
+			});
+
+			it('"readonly" attribute should be setting up depending on props.readonly', () => {
+				expect(
+					wrapper.contains('input[readonly="readonly"]')
+				).toBeFalsy();
+				wrapper.setProps({ readonly: true });
+				expect(
+					wrapper.contains('input[readonly="readonly"]')
+				).toBeTruthy();
+			});
+
+			it('"autofocus" attribute should be setting up depending on props.autofocus', () => {
+				expect(
+					wrapper
+						.find('input.vue-number-input__input')
+						.attributes('autofocus')
+				).toBeFalsy();
+				wrapper.setProps({ autofocus: true });
+				expect(
+					wrapper
+						.find('input.vue-number-input__input')
+						.attributes('autofocus')
+				).toBeTruthy();
+			});
+
+			it('"aria-valuenow" attribute should be setting up depending on props.value', () => {
+				expect(
+					wrapper
+						.find('input.vue-number-input__input')
+						.attributes('aria-valuenow')
+				).toEqual('2');
+				wrapper.setProps({ value: 3 });
+				expect(
+					wrapper
+						.find('input.vue-number-input__input')
+						.attributes('aria-valuenow')
+				).toEqual('3');
+			});
+
+			it('"aria-valuemin" attribute should be setting up depending on props.min', () => {
+				expect(
+					wrapper
+						.find('input.vue-number-input__input')
+						.attributes('aria-valuemin')
+				).toEqual('0');
+				wrapper.setProps({ min: 1 });
+				expect(
+					wrapper
+						.find('input.vue-number-input__input')
+						.attributes('aria-valuemin')
+				).toEqual('1');
+			});
+
+			it('"aria-valuemax" attribute should be setting up depending on props.max', () => {
+				expect(
+					wrapper
+						.find('input.vue-number-input__input')
+						.attributes('aria-valuemax')
+				).toEqual('10');
+				wrapper.setProps({ max: 11 });
+				expect(
+					wrapper
+						.find('input.vue-number-input__input')
+						.attributes('aria-valuemax')
+				).toEqual('11');
+			});
+
+			it('"vue-number-input__input_inactive" class should be added if props.disabled === true', () => {
+				expect(
+					wrapper.contains('input.vue-number-input__input_inactive')
+				).toBeFalsy();
+				wrapper.setProps({ disabled: true });
+				expect(
+					wrapper.contains('input.vue-number-input__input_inactive')
+				).toBeTruthy();
+			});
+
+			it('Element should have a custom class if user set props.inputClass', () => {
+				wrapper.setProps({ inputClass: 'custom-input-class' });
+				expect(
+					wrapper.contains('input.custom-input-class')
+				).toBeTruthy();
+			});
+		});
+	});
+
+	describe('Testing events', () => {
+		describe('Buttons click and keypress events', () => {
+			it('Click on .vue-number-input__btn-inc should invoke methods.buttonDownHandler with "inc" argument', () => {
+				wrapper.setMethods({ buttonDownHandler: jest.fn() });
+				wrapper
+					.find('.vue-number-input__btn-inc')
+					.trigger('mousedown', { buttons: 1, button: 0 });
+				expect(wrapper.vm.buttonDownHandler).lastCalledWith('inc');
+			});
+
+			it('Click on .vue-number-input__btn-inc should invoke methods.buttonUpHandler', () => {
+				wrapper.setMethods({ buttonUpHandler: jest.fn() });
+				wrapper
+					.find('.vue-number-input__btn-inc')
+					.trigger('mouseup', { buttons: 1, button: 0 });
+				expect(wrapper.vm.buttonUpHandler).toHaveBeenCalled();
+			});
+
+			it('Press enter on .vue-number-input__btn-inc should invoke methods.buttonDownHandler', () => {
+				wrapper.setMethods({ buttonDownHandler: jest.fn() });
+				wrapper
+					.find('.vue-number-input__btn-inc')
+					.trigger('keydown', { key: 'Enter', keyCode: 13 });
+				expect(wrapper.vm.buttonDownHandler).lastCalledWith('inc');
+			});
+
+			it('Click on .vue-number-input__btn-dec should invoke methods.buttonDownHandler "dec" argument', () => {
+				wrapper.setMethods({ buttonDownHandler: jest.fn() });
+				wrapper
+					.find('.vue-number-input__btn-dec')
+					.trigger('mousedown', { buttons: 1, button: 0 });
+				expect(wrapper.vm.buttonDownHandler).lastCalledWith('dec');
+			});
+
+			it('Click on .vue-number-input__btn-dec should invoke methods.buttonUpHandler', () => {
+				wrapper.setMethods({ buttonUpHandler: jest.fn() });
+				wrapper
+					.find('.vue-number-input__btn-dec')
+					.trigger('mouseup', { buttons: 1, button: 0 });
+				expect(wrapper.vm.buttonUpHandler).toHaveBeenCalled();
+			});
+
+			it('Press enter on .vue-number-input__btn-dec should invoke methods.buttonDownHandler', () => {
+				wrapper.setMethods({ buttonDownHandler: jest.fn() });
+				wrapper
+					.find('.vue-number-input__btn-dec')
+					.trigger('keydown', { key: 'Enter', keyCode: 13 });
+				expect(wrapper.vm.buttonDownHandler).toHaveBeenCalledWith(
+					'dec'
+				);
+			});
+		});
 	});
 });
