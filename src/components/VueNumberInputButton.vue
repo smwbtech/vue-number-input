@@ -15,7 +15,7 @@ export default {
 
 	computed: {
 		content() {
-			return this.type === 'up' ? '+' : '–';
+			return this.type === 'inc' ? '+' : '–';
 		}
 	}
 };
