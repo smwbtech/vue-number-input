@@ -16,7 +16,7 @@
 			@keyup.enter="buttonUpHandler"
 		>
 			<slot name="button-decrease">
-				<VueNumberInputButton :type="'down'" />
+				<VueNumberInputButton :type="'dec'" />
 			</slot>
 		</div>
 		<input
@@ -59,7 +59,7 @@
 			@keyup.enter="buttonUpHandler"
 		>
 			<slot name="button-increase">
-				<VueNumberInputButton :type="'up'" />
+				<VueNumberInputButton :type="'inc'" />
 			</slot>
 		</div>
 	</div>
