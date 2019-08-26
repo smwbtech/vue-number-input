@@ -1,5 +1,11 @@
 <template lang="html">
-	<div :class="[containerClasses.regular, containerClasses.type]">
+	<div
+		:class="[
+			containerClasses.regular,
+			containerClasses.isActive,
+			containerClasses.type
+		]"
+	>
 		<div
 			tabindex="0"
 			role="button"
@@ -24,7 +30,7 @@
 			role="spinbutton"
 			ref="number-input"
 			name="number-input"
-			autocomplete="off"
+			autocomplete="nope"
 			aria-label="number input"
 			:autofocus="autofocus ? 'autofocus' : false"
 			:aria-valuenow="value"
@@ -147,6 +153,7 @@ export default {
 			}
 			return {
 				regular: 'vue-number-input',
+				isActive: this.disabled ? 'vue-number-input_inactive' : '',
 				type
 			};
 		},
@@ -322,7 +329,7 @@ export default {
 			// The first one will give deltaY >= 100, touchpad always start with small values,
 			// and then deltaY depends of touchpad scroll speed.
 			if (!this.firstDeltaY) this.firstDeltaY = Math.abs(e.deltaY);
-			this.makeStep(this.nextStep);
+			!this.readonly ? this.makeStep(this.nextStep) : false;
 		},
 
 		/**
@@ -335,10 +342,10 @@ export default {
 		keyDownHandler(e) {
 			switch (e.keyCode) {
 				case 38:
-					this.makeStep(this.value + this.step);
+					if (!this.readonly) this.makeStep(this.value + this.step);
 					break;
 				case 40:
-					this.makeStep(this.value - this.step);
+					if (!this.readonly) this.makeStep(this.value - this.step);
 					break;
 				default:
 					return false;
@@ -358,6 +365,10 @@ export default {
 	border: 1px solid #eee;
 	padding: 0px;
 	border-radius: 5px;
+
+	&.vue-number-input_inactive {
+		background-color: #f7f7f7;
+	}
 
 	& .vue-number-input__input {
 		border: none;
