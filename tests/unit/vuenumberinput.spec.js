@@ -166,7 +166,7 @@ describe('Tests for VueNumberInput.vue component', () => {
 			wrapper.vm.inputHandler(wrong);
 			expect(wrapper.vm.makeStep).not.toHaveBeenCalled();
 			wrapper.vm.inputHandler(correct);
-			expect(wrapper.vm.makeStep).lastCalledWith(8);
+			expect(wrapper.vm.makeStep).lastCalledWith('8');
 		});
 
 		it('Component should have buttonDownHandler method and it should invoke methods.buttonUpHandler, methods.makeStep, setTimeoutout and setInterval methods', () => {
@@ -203,16 +203,21 @@ describe('Tests for VueNumberInput.vue component', () => {
 
 		it('Component should have makeStep method and it should emmit "input event" if props.min <= value <= props.max && props.disabled === false', () => {
 			expect(typeof wrapper.vm.makeStep).toBe('function');
-			wrapper.vm.makeStep(-1);
+			wrapper.vm.makeStep('-1');
 			expect(wrapper.emitted('input')).toBeFalsy();
-			wrapper.vm.makeStep(11);
+			wrapper.vm.makeStep('11');
 			expect(wrapper.emitted('input')).toBeFalsy();
 			wrapper.setProps({ disabled: true });
-			wrapper.vm.makeStep(8);
+			wrapper.vm.makeStep('8');
 			expect(wrapper.emitted('input')).toBeFalsy();
 			wrapper.setProps({ disabled: false });
-			wrapper.vm.makeStep(8);
+			wrapper.vm.makeStep('8');
 			expect(wrapper.emitted('input')[0][0]).toBe(8);
+		});
+
+		it('makeStep method shoul round float numbers to 2 decimals', () => {
+			wrapper.vm.makeStep('4.4300234');
+			expect(wrapper.emitted('input')[0][0]).toBe(4.43);
 		});
 
 		it('Component should have addEventListeners method and it shoud emmit "focus" event and addEventListener for "wheel" and "keydown" events', () => {
