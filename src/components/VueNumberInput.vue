@@ -1,18 +1,21 @@
 <template lang="html">
-	<div :class="[controlsType ? controlsType : '', 'vue-number-input']">
+	<div :class="[containerClasses.regular, containerClasses.type]">
 		<div
 			tabindex="0"
 			role="button"
 			aria-label="decrease"
+			:aria-disabled="`${value === min || disabled}`"
 			:class="[
-				buttonDownClasses.regular,
-				buttonDownClasses.isActive,
-				buttonDownClasses.userClass
+				buttonDecClasses.regular,
+				buttonDecClasses.isActive,
+				buttonDecClasses.userClass
 			]"
-			@mousedown.left="buttonDownHandler('dec')"
+			@mousedown.left="mousedownHandler('dec')"
 			@mouseup="buttonUpHandler"
+			@keydown.enter="decreaseButtonKeydown"
+			@keyup.enter="buttonUpHandler"
 		>
-			<slot name="button-down">
+			<slot name="button-decrease">
 				<VueNumberInputButton :type="'down'" />
 			</slot>
 		</div>
@@ -20,11 +23,23 @@
 			type="text"
 			role="spinbutton"
 			ref="number-input"
-			:placeholder="placeholder ? placeholder : ''"
-			:value="inputValue"
-			:class="[inputClasses.regular, inputClasses.userClass]"
+			name="number-input"
+			autocomplete="off"
+			aria-label="number input"
+			:autofocus="autofocus ? 'autofocus' : false"
+			:aria-valuenow="value"
+			:aria-valuemin="min"
+			:aria-valuemax="max"
+			:aria-disabled="`${disabled}`"
+			:disabled="disabled"
+			:readonly="readonly"
+			:value="value"
+			:class="[
+				inputClasses.regular,
+				inputClasses.isActive,
+				inputClasses.userClass
+			]"
 			@focus="addEventListeners"
-			@click.prevent="clickHandler"
 			@blur="removeEventListeners"
 			@input.prevent="inputHandler"
 		/>
@@ -32,15 +47,18 @@
 			tabindex="0"
 			role="button"
 			aria-label="increase"
+			:aria-disabled="`${value === max || disabled}`"
 			:class="[
-				buttonUpClasses.regular,
-				buttonUpClasses.isActive,
-				buttonUpClasses.userClass
+				buttonIncClasses.regular,
+				buttonIncClasses.isActive,
+				buttonIncClasses.userClass
 			]"
-			@mousedown.left="buttonDownHandler('inc')"
+			@mousedown.left="mousedownHandler('inc')"
 			@mouseup="buttonUpHandler"
+			@keydown.enter="increaseButtonKeydown"
+			@keyup.enter="buttonUpHandler"
 		>
-			<slot name="button-up">
+			<slot name="button-increase">
 				<VueNumberInputButton :type="'up'" />
 			</slot>
 		</div>
@@ -49,7 +67,6 @@
 
 <script>
 import VueNumberInputButton from './VueNumberInputButton.vue';
-import { setCaretToPos } from '@/assets/js/caretPosition.js';
 
 export default {
 	components: {
@@ -57,10 +74,6 @@ export default {
 	},
 
 	props: {
-		placeholder: {
-			type: String,
-			default: ''
-		},
 		value: {
 			type: Number,
 			default: 0
@@ -77,30 +90,34 @@ export default {
 			type: Number,
 			default: 1
 		},
+		disabled: {
+			type: Boolean,
+			default: false
+		},
+		readonly: {
+			type: Boolean,
+			default: false
+		},
+		autofocus: {
+			type: Boolean,
+			default: false
+		},
 		showColntrols: {
 			type: Boolean,
 			default: true
 		},
-		controlsType: {
+		controlsPosition: {
 			type: String,
 			default: 'on edges',
 			validator: str => ['on edges', 'left', 'right'].indexOf(str) !== -1
 		},
-		sign: {
-			type: String,
-			validator: str => /\s*/i.test(str)
-		},
-		signPosition: {
-			type: String,
-			validator: str => ['left', 'right'].indexOf(str) !== -1
-		},
 		inputClass: {
 			type: String
 		},
-		buttonUpClass: {
+		buttonIncClass: {
 			type: String
 		},
-		buttonDownClass: {
+		buttonDecClass: {
 			type: String
 		}
 	},
@@ -109,43 +126,46 @@ export default {
 		return {
 			firstDeltaY: undefined,
 			currentDeltaY: undefined,
-			timeoutId: true,
-			indervalId: undefined,
-			decreasePressed: false,
-			increasePressed: false
+			timeoutId: undefined,
+			intervalId: undefined
 		};
-	},
-
-	watch: {
-		value: function(newVal, oldVal) {
-			if (this.sign) {
-				const currentCaretPosition = this.$refs['number-input']
-					.selectionStart;
-				console.log(`currentCaretPosition: ${currentCaretPosition}`);
-				const caretPosition = `${newVal}`.length;
-				console.log(`caretPosition: ${caretPosition}`);
-				const signLength = `${this.sign}`.length;
-				console.log(`signLength: ${signLength}`);
-				const position = currentCaretPosition - (signLength + 1);
-				console.log(`position: ${position}`);
-				setCaretToPos(this.$refs['number-input'], 0);
-			}
-		}
 	},
 
 	computed: {
 		/**
+		 * Returns classes for container
+		 * @return {Object} - classes object
+		 */
+		containerClasses() {
+			let type;
+			switch (this.controlsPosition) {
+				case 'on edges':
+					type = 'vue-number-input_on-edge';
+					break;
+				case 'left':
+					type = 'vue-number-input_on-left';
+					break;
+				case 'right':
+					type = 'vue-number-input_on-right';
+					break;
+			}
+			return {
+				regular: 'vue-number-input',
+				type
+			};
+		},
+		/**
 		 * Returns classes for down button
 		 * @return {Object} - classes object
 		 */
-		buttonDownClasses() {
+		buttonDecClasses() {
 			return {
 				regular: 'vue-number-input__btn-dec',
 				isActive:
-					this.value === this.min
+					this.value === this.min || this.disabled
 						? 'vue-number-input__btn-dec_inactive'
 						: '',
-				userClass: this.buttonDownClass
+				userClass: this.buttonDecClass
 			};
 		},
 
@@ -153,14 +173,14 @@ export default {
 		 * Returns classes for up button
 		 * @return {Object} - classes object
 		 */
-		buttonUpClasses() {
+		buttonIncClasses() {
 			return {
 				regular: 'vue-number-input__btn-inc',
 				isActive:
-					this.value === this.max
+					this.value === this.max || this.disabled
 						? 'vue-number-input__btn-inc_inactive'
 						: '',
-				userClass: this.buttonUpClass
+				userClass: this.buttonIncClass
 			};
 		},
 
@@ -171,6 +191,9 @@ export default {
 		inputClasses() {
 			return {
 				regular: 'vue-number-input__input',
+				isActive: this.disabled
+					? 'vue-number-input__input_disabled'
+					: '',
 				userClass: this.inputClass
 			};
 		},
@@ -193,24 +216,6 @@ export default {
 				return this.currentDeltaY > 0
 					? this.value - this.step
 					: this.value + this.step;
-		},
-
-		/**
-		 * If user set props.sign and props.sighPosition
-		 * will return string with sign. If sign is undefined
-		 * will return prop.value
-		 * @return {String} - modificated string
-		 */
-		inputValue() {
-			if (this.sign) {
-				switch (this.signPosition) {
-					case 'left':
-						return `${this.sign} ${this.value}`;
-					case 'right':
-						return `${this.value} ${this.sign}`;
-				}
-			}
-			return this.value;
 		}
 	},
 
@@ -222,11 +227,7 @@ export default {
 		 * @return {undefined}
 		 */
 		inputHandler(e) {
-			const newValue = this.sign
-				? e.target.value.split(' ')[
-						this.sighPosition === 'left' ? 1 : 0
-				  ]
-				: e.target.value;
+			const newValue = e.target.value;
 			const numericPattern = /^-{0,1}\d*(\.\d*)*$/i;
 			if (!numericPattern.test(newValue)) e.target.value = this.value;
 			else this.makeStep(parseFloat(newValue));
@@ -239,7 +240,9 @@ export default {
 		 * @param  {String} direction - 'up' or 'down'
 		 * @return {undefined}
 		 */
-		buttonDownHandler(direction) {
+		mousedownHandler(direction) {
+			// clear all previpus timeouts and intervals
+			this.buttonUpHandler();
 			this.mousePressed = true;
 			this.makeStep(
 				direction === 'inc'
@@ -278,7 +281,7 @@ export default {
 		 * @return {undefined}
 		 */
 		makeStep(val) {
-			if (val >= this.min && val <= this.max) {
+			if (val >= this.min && val <= this.max && !this.disabled) {
 				this.$emit('input', val);
 			}
 		},
@@ -295,12 +298,8 @@ export default {
 			e.target.addEventListener('keydown', this.keyDownHandler);
 		},
 
-		clickHandler(e) {
-			setCaretToPos(this.$refs['number-input'], 0);
-		},
-
 		/**
-		 * Will add wheel and keydown event listeners
+		 * Will remove wheel and keydown event listeners
 		 * when user focus goes out of the form
 		 * and emit blur event
 		 * @param {Object} e - blur event obect
@@ -311,6 +310,24 @@ export default {
 			this.currentDeltaY = undefined;
 			e.target.removeEventListener('wheel', this.wheelHandler);
 			e.target.removeEventListener('keydown', this.keyDownHandler);
+		},
+
+		/**
+		 * Enter button decrease handler
+		 * @param  {Object} e - event object
+		 * @return {undefined}
+		 */
+		decreaseButtonKeydown() {
+			this.mousedownHandler('dec');
+		},
+
+		/**
+		 * Enter button increase handler
+		 * @param  {Object} e - event object
+		 * @return {undefined}
+		 */
+		increaseButtonKeydown() {
+			this.mousedownHandler('inc');
 		},
 
 		/**
@@ -326,7 +343,7 @@ export default {
 			// It is necessary to detect mouse / touchpad wheel event
 			// The first one will give deltaY >= 100, touchpad always start with small values,
 			// and then deltaY depends of touchpad scroll speed.
-			if (!this.firstDeltaY) this.firstDeltaY = e.deltaY;
+			if (!this.firstDeltaY) this.firstDeltaY = Math.abs(e.deltaY);
 			this.makeStep(this.nextStep);
 		},
 
@@ -368,11 +385,15 @@ export default {
 		border: none;
 		width: 70%;
 		padding: 10px;
+
+		&.vue-number-input__input_disabled {
+			background-color: #f7f7f7;
+			cursor: not-allowed;
+		}
 	}
 
 	& .vue-number-input__btn-dec,
 	& .vue-number-input__btn-inc {
-		width: 15%;
 		background-color: #f7f7f7;
 		cursor: pointer;
 
@@ -382,6 +403,63 @@ export default {
 			background-color: #eee;
 		}
 	}
+
+	&.vue-number-input_on-edge {
+		& .vue-number-input__btn-dec,
+		& .vue-number-input__btn-inc {
+			width: 15%;
+		}
+	}
+
+	&.vue-number-input_on-left,
+	&.vue-number-input_on-right {
+		& .vue-number-input__input {
+			width: 80%;
+			padding: 20px 10px;
+		}
+		& .vue-number-input__btn-dec,
+		& .vue-number-input__btn-inc {
+			position: absolute;
+			height: 50%;
+			width: 20%;
+		}
+
+		& .vue-number-input__btn-dec {
+			bottom: 0;
+		}
+
+		& .vue-number-input__btn-inc {
+			top: 0;
+			border-bottom: 1px solid #eee;
+		}
+	}
+
+	&.vue-number-input_on-left {
+
+		& .vue-number-input__input {
+			margin-left: 20%;
+
+		}
+
+		& .vue-number-input__btn-dec,
+		& .vue-number-input__btn-inc {
+			left: 0;
+		}
+	}
+
+	&.vue-number-input_on-right {
+
+		& .vue-number-input__input {
+			margin-right: 20%;
+
+		}
+
+		& .vue-number-input__btn-dec,
+		& .vue-number-input__btn-inc {
+			right: 0;
+		}
+	}
+
 
 } /* end vue-num-inp*/
 </style>
