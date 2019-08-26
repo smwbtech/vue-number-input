@@ -8,8 +8,12 @@ script:
     - npm run test:unit
 after_script:
     - cat ./coverage/lcov.info | coveralls
+    - npm run build
 deploy:
-    provider: script
-    script: deploy.sh
+    provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN # Set in the settings page of your repository, as a secure variable
+    local_dir: /dist
+    keep_history: true
     on:
         branch: master
