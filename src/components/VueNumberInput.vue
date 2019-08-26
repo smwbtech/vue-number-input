@@ -102,10 +102,6 @@ export default {
 			type: Boolean,
 			default: false
 		},
-		showColntrols: {
-			type: Boolean,
-			default: true
-		},
 		controlsPosition: {
 			type: String,
 			default: 'on edges',
