@@ -539,4 +539,53 @@ code {
 		}
 	}
 }
+
+/* Mobile devices */
+@media (320px <= width < 1024px) {
+	#app {
+		& .header {
+			& h1 {
+				font-size: 1.2em;
+			}
+		}
+
+		& .content {
+			margin: 0px 20px;
+
+			& p {
+				text-align: center;
+			}
+
+			& .sub-title {
+				text-align: center;
+
+				&:after {
+					left: calc(50% - 20px);
+				}
+			}
+
+			& .number-input {
+				width: 100%;
+			}
+		}
+
+		& .footer {
+			padding: 0px 20px;
+
+			& .footer-text {
+				padding: 0;
+				margin: 0;
+
+				& .footer-text__item {
+					flex-flow: column;
+
+					& .gh-icon {
+						margin-left: 0;
+						margin-top: 20px;
+					}
+				}
+			}
+		}
+	}
+}
 </style>
