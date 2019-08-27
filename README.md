@@ -13,8 +13,6 @@ Vue component for numbers input.
 -   Flexible styling
 -   Support custom controls through slots
 
-![Accessible](https://github.com/smwbtech/vue-number-input/blob/master/public/accessibility.jpg?raw=true)
-
 #### [Live Demo](https://smwbtech.github.io/vue-number-input/)
 
 ## Download
@@ -92,7 +90,7 @@ You can bind following props for vue-input-number element
 <vue-number-input :value="50" :min="0" :max="100" :controlsPosition="'left'" />
 ```
 
-For more examples visit [demo page](https://smwbtech.github.io/vue-number-input/)
+For more examples visit **[demo page](https://smwbtech.github.io/vue-number-input/)**
 
 #### Your own controls through slot
 
