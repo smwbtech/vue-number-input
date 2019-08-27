@@ -57,7 +57,7 @@ Or register it globally in your application entry point (main.js or as you calle
 
 ```javascript
 import Vue from 'vue';
-import VueNumberInput from '@smartweb/vue-number-input.vue';
+import VueNumberInput from '@smartweb/vue-number-input';
 // Global registration of the component
 Vue.component('vue-number-input', VueNumberInput);
 
