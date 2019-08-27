@@ -286,6 +286,19 @@ describe('Tests for VueNumberInput.vue component', () => {
 			expect(secondEvent.preventDefault).toHaveBeenCalled();
 		});
 
+		it("wheelHandler method shouldn't invoke methods.makeStep if props.readonly === true", () => {
+			const firstEvent = {
+				deltaY: 1,
+				preventDefault: jest.fn()
+			};
+			wrapper.setProps({ readonly: true });
+			wrapper.setMethods({
+				makeStep: jest.fn()
+			});
+			wrapper.vm.wheelHandler(firstEvent);
+			expect(wrapper.vm.makeStep).not.toHaveBeenCalled();
+		});
+
 		it('Component should have keyDownHandler method and it should invoke makeStep and decrease value, if user press arrow down key and decrease if arrow up', () => {
 			const arrowUp = { keyCode: 38 };
 			const arrowDown = { keyCode: 40 };
@@ -297,6 +310,17 @@ describe('Tests for VueNumberInput.vue component', () => {
 			wrapper.vm.keyDownHandler(arrowDown);
 			expect(wrapper.vm.makeStep).lastCalledWith(1);
 			expect(wrapper.vm.keyDownHandler(enter)).toBeFalsy();
+		});
+
+		it("keyDownHandler method shouldn't invoke methods.makeStep if props.readonly === true", () => {
+			const arrowUp = { keyCode: 38 };
+			const arrowDown = { keyCode: 40 };
+			wrapper.setMethods({ makeStep: jest.fn() });
+			wrapper.setProps({ readonly: true });
+			wrapper.vm.keyDownHandler(arrowUp);
+			expect(wrapper.vm.makeStep).not.toHaveBeenCalled();
+			wrapper.vm.keyDownHandler(arrowDown);
+			expect(wrapper.vm.makeStep).not.toHaveBeenCalled();
 		});
 	});
 
