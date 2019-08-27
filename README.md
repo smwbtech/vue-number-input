@@ -34,7 +34,7 @@ Or via cdn
 Import and register in your component.vue file
 
 ```javascript
-import VueNumberInput from '@smartweb/vue-number-input.vue';
+import VueNumberInput from '@smartweb/vue-number-input';
 
 export default {
 	components: {
