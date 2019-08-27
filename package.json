@@ -25,9 +25,9 @@
 		"type": "git",
 		"url": "https://github.com/smwbtech/vue-number-input"
 	},
-	"homepage": "https://smwbtech.github.io/vue-flash-message/",
+	"homepage": "https://smwbtech.github.io/vue-number-input/",
 	"bugs": {
-		"url": "https://github.com/smwbtech/vue-flash-message/issues"
+		"url": "https://github.com/smwbtech/vue-number-input/issues"
 	},
 	"license": "MIT",
 	"author": {
