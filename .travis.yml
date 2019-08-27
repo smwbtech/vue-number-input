@@ -10,6 +10,7 @@ after_script:
     - cat ./coverage/lcov.info | coveralls
 deploy:
     provider: script
+    skip_cleanup: true
     script: bash ./deploy.sh
     on:
         branch: master
