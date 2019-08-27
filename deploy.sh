@@ -28,10 +28,13 @@ git commit -m 'deploy'
 
 # если вы публикуете по адресу https://<USERNAME>.github.io
 # git push -f git@github.com:<USERNAME>/<USERNAME>.github.io.git master
+echo "ADD REMOTE"
+git remote add origin-pages https://$GITHUB_TOKEN@github.com/smwbtech/vue-number-input.git master:gh-pages
 
 echo "GIT PUSH"
 # если вы публикуете по адресу https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:smwbtech/vue-number-input.git master:gh-pages
+#git push -f git@github.com:smwbtech/vue-number-input.git master:gh-pages
+git push -f origin-pages gh-pages
 
 echo "DEPLOYMENT - SUCCEED"
 
