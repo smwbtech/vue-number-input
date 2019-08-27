@@ -8,6 +8,9 @@ script:
     - npm run test:unit
 after_script:
     - cat ./coverage/lcov.info | coveralls
+before_deploy:
+    - git config --local user.name "$GITHUB_LOGIN"
+    - git config --local user.email "$GITHUB_PW"
 deploy:
     provider: script
     skip_cleanup: true
