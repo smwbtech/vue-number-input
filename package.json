@@ -1,5 +1,5 @@
 {
-	"name": "@smartweb/vue-flash-message",
+	"name": "@smartweb/vue-number-input",
 	"version": "1.0.1",
 	"main": "./build/vue-flash-msg.common.js",
 	"unpkg": "./build/vue-flash-msg.umd.min.js",
