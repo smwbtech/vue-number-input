@@ -35,7 +35,6 @@
 		"email": "roman.privalov@gmail.com",
 		"url": "https://t.me/RomanPrivalov"
 	},
-	"private": false,
 	"scripts": {
 		"serve": "vue-cli-service serve",
 		"build": "vue-cli-service build",
