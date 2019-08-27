@@ -5,8 +5,8 @@
 	"unpkg": "./build/vue-flash-msg.umd.min.js",
 	"files": [
 		"build/*",
-		"*.json",
-		"*.js"
+		"build/*.json",
+		"build/*.js"
 	],
 	"description": "Vue number input component with great accessibility: ARIA, control by keyboard and wheel",
 	"keywords": [
