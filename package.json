@@ -34,13 +34,13 @@
 		"email": "roman.privalov@gmail.com",
 		"url": "https://t.me/RomanPrivalov"
 	},
-	"private": true,
+	"private": false,
 	"scripts": {
 		"serve": "vue-cli-service serve",
 		"build": "vue-cli-service build",
 		"lint": "vue-cli-service lint",
 		"test:unit": "vue-cli-service test:unit --verbose",
-		"lib": "cross-env NODE_ENV=production vue-cli-service build --mode production -g envify --target lib --name vue-number-input ./src/components/VueNumberInput.vue --dest ./build"
+		"lib": "cross-env NODE_ENV=production vue-cli-service build --mode production -g envify --target lib --name vue-number-input ./src/components/wrapper.js --dest ./build"
 	},
 	"devDependencies": {
 		"@vue/cli-plugin-babel": "^3.11.0",
