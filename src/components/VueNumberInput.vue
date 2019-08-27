@@ -75,6 +75,8 @@
 import VueNumberInputButton from './VueNumberInputButton.vue';
 
 export default {
+	name: 'vue-number-input',
+
 	components: {
 		VueNumberInputButton
 	},
