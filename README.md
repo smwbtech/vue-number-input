@@ -4,7 +4,6 @@
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/smwbtech/vue-flash-message/blob/master/LICENSE.md)
 [![Build Status](https://travis-ci.org/smwbtech/vue-number-input.svg?branch=master)](https://travis-ci.org/smwbtech/vue-number-input)
 [![Coverage Status](https://coveralls.io/repos/github/smwbtech/vue-number-input/badge.svg?branch=master)](https://coveralls.io/github/smwbtech/vue-number-input?branch=master)
-![Accessible](https://github.com/smwbtech/vue-number-input/blob/master/public/accessibility.jpg?raw=true)
 
 Vue component for numbers input.
 
@@ -13,6 +12,8 @@ Vue component for numbers input.
 -   Use your mousewheel or touchpad to increase or descrease value
 -   Flexible styling
 -   Support custom controls through slots
+
+![Accessible](https://github.com/smwbtech/vue-number-input/blob/master/public/accessibility.jpg?raw=true)
 
 #### [Live Demo](https://smwbtech.github.io/vue-number-input/)
 
