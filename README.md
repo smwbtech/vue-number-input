@@ -1,10 +1,18 @@
 # @smartweb/vue-number-input
 
+[![vue](https://img.shields.io/badge/Vue-2.x-green.svg)](https://vuejs.org/index.html)
+[![license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/smwbtech/vue-flash-message/blob/master/LICENSE.md)
+[![Build Status](https://travis-ci.org/smwbtech/vue-number-input.svg?branch=master)](https://travis-ci.org/smwbtech/vue-number-input)
+[![Coverage Status](https://coveralls.io/repos/github/smwbtech/vue-number-input/badge.svg?branch=master)](https://coveralls.io/github/smwbtech/vue-number-input?branch=master)
+![Accessible](https://github.com/smwbtech/vue-number-input/blob/master/public/accessibility.jpg?raw=true)
+
 Vue component for numbers input.
 
--   Accessible: uses ARIA agreements
+-   Accessible: uses ARIA agreements (100% accessibility in lighthouse)
 -   Use your keyboard to navigate and control
 -   Use your mousewheel or touchpad to increase or descrease value
+-   Flexible styling
+-   Support custom controls through slots
 
 #### [Live Demo](https://smwbtech.github.io/vue-number-input/)
 
@@ -76,6 +84,38 @@ You can bind following props for vue-input-number element
 | **inputClass**       | **String**  |            -            |                                      Defines user's class for input element                                      |
 | **buttonIncClass**   | **String**  |            -            |                                     Defines user's class for increase button                                     |
 | **buttonDecClass**   | **String**  |            -            |                                     Defines user's class for decrease button                                     |
+
+#### Example
+
+```html
+<vue-number-input :value="50" :min="0" :max="100" :controlsPosition="'left'" />
+```
+
+For more examples visit [demo page](https://smwbtech.github.io/vue-number-input/)
+
+#### Your own controls through slot
+
+You can create your own controls and pass them to slots
+Read more about slots in [official docs](https://vuejs.org/v2/guide/components-slots.html)
+
+```html
+<vue-number-input
+	class="custom-container"
+	:inputClass="custom-input"
+	:buttonIncClass="custom-btn-inc"
+	:buttonDecClass="custom-btn-dec"
+>
+	<!-- slot for decrease button -->
+	<template #button-decrease>
+		<custom-decrease-button></custom-decrease-button>
+	</template>
+
+	<!-- slot for increase button -->
+	<template #button-increase>
+		<custom-increase-button></custom-increase-button>
+	</template>
+</vue-number-input>
+```
 
 ## LICENSE
 
