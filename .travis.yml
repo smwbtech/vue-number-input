@@ -10,10 +10,7 @@ after_script:
     - cat ./coverage/lcov.info | coveralls
     - npm run build
 deploy:
-    provider: pages
-    skip_cleanup: true
-    github_token: $GITHUB_TOKEN # Set in the settings page of your repository, as a secure variable
-    local_dir: /dist
-    keep_history: true
+    provider: script
+    script: bash deploy.sh
     on:
         branch: master
