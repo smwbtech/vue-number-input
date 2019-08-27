@@ -23,6 +23,7 @@ module.exports = {
 	collectCoverageFrom: [
 		'**/*.{vue}',
 		'!**/App.{vue}',
+		'!**/wrapper.js',
 		'!**/node_modules/**',
 		'!<rootDir>/dist/**',
 		'!<rootDir>/src/plugins/**',
