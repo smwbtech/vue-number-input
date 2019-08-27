@@ -6,9 +6,9 @@ cache:
         - node_modules
 script:
     - npm run test:unit
+    - npm run build
 after_script:
     - cat ./coverage/lcov.info | coveralls
-    - npm run build
 deploy:
     provider: pages
     skip_cleanup: true
