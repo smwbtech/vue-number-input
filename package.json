@@ -2,6 +2,7 @@
 	"name": "@smartweb/vue-flash-message",
 	"version": "1.0.0",
 	"main": "./build/vue-flash-msg.common.js",
+	"unpkg": "./build/vue-flash-msg.umd.min.js",
 	"files": [
 		"build/*",
 		"*.json",
