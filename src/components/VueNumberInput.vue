@@ -20,6 +20,8 @@
 			@mouseup="buttonUpHandler"
 			@keydown.enter="buttonDownHandler('dec')"
 			@keyup.enter="buttonUpHandler"
+			@touchstart.prevent="buttonDownHandler('dec')"
+			@touchend="buttonUpHandler"
 		>
 			<slot name="button-decrease">
 				<VueNumberInputButton :type="'dec'" />
@@ -63,6 +65,8 @@
 			@mouseup="buttonUpHandler"
 			@keydown.enter="buttonDownHandler('inc')"
 			@keyup.enter="buttonUpHandler"
+			@touchstart.prevent="buttonDownHandler('inc')"
+			@touchend="buttonUpHandler"
 		>
 			<slot name="button-increase">
 				<VueNumberInputButton :type="'inc'" />
@@ -254,6 +258,7 @@ export default {
 					: this.value - this.step
 			);
 			// After 500 ms will start value increasing process
+			/* istanbul ignore next */
 			this.timeoutId = setTimeout(
 				(this.intervalId = setInterval(
 					() =>

@@ -193,6 +193,33 @@ describe('Tests for VueNumberInput.vue component', () => {
 			setTimeout.mockClear();
 		});
 
+		it('buttonDownHandler method should invoke setTimeout function', () => {
+			wrapper.setMethods({
+				makeStep: jest.fn()
+			});
+			wrapper.vm.buttonDownHandler('inc');
+			expect(setTimeout).toHaveBeenCalledWith(
+				expect.any(Number),
+				expect.any(Number)
+			);
+			setInterval.mockClear();
+			setTimeout.mockClear();
+		});
+
+		it('buttonDownHandler method should invoke setInterval function', () => {
+			wrapper.setMethods({
+				makeStep: jest.fn()
+			});
+			wrapper.vm.buttonDownHandler('inc');
+			expect(setInterval).toHaveBeenCalledWith(
+				expect.any(Function),
+				expect.any(Number)
+			);
+			expect(wrapper.vm.makeStep).toHaveBeenCalledWith(3);
+			setInterval.mockClear();
+			setTimeout.mockClear();
+		});
+
 		it('Component should have buttonUpHandler method and it should invoke clearTimeout and clearInterval', () => {
 			wrapper.setData({ intervalId: 1, timeoutId: 2 });
 			expect(typeof wrapper.vm.buttonUpHandler).toBe('function');
@@ -605,6 +632,22 @@ describe('Tests for VueNumberInput.vue component', () => {
 				expect(wrapper.vm.buttonDownHandler).lastCalledWith('inc');
 			});
 
+			it('Touchstart event on .vue-number-input__btn-inc should invoke methods.buttonDownHandler', () => {
+				wrapper.setMethods({ buttonDownHandler: jest.fn() });
+				wrapper
+					.find('.vue-number-input__btn-inc')
+					.trigger('touchstart');
+				expect(wrapper.vm.buttonDownHandler).toHaveBeenCalledWith(
+					'inc'
+				);
+			});
+
+			it('Touchend event on .vue-number-input__btn-inc should invoke methods.buttonUpHandler', () => {
+				wrapper.setMethods({ buttonUpHandler: jest.fn() });
+				wrapper.find('.vue-number-input__btn-inc').trigger('touchend');
+				expect(wrapper.vm.buttonUpHandler).toHaveBeenCalled();
+			});
+
 			it('Click on .vue-number-input__btn-dec should invoke methods.buttonDownHandler "dec" argument', () => {
 				wrapper.setMethods({ buttonDownHandler: jest.fn() });
 				wrapper
@@ -629,6 +672,22 @@ describe('Tests for VueNumberInput.vue component', () => {
 				expect(wrapper.vm.buttonDownHandler).toHaveBeenCalledWith(
 					'dec'
 				);
+			});
+
+			it('Touchstart event on .vue-number-input__btn-dec should invoke methods.buttonDownHandler', () => {
+				wrapper.setMethods({ buttonDownHandler: jest.fn() });
+				wrapper
+					.find('.vue-number-input__btn-dec')
+					.trigger('touchstart');
+				expect(wrapper.vm.buttonDownHandler).toHaveBeenCalledWith(
+					'dec'
+				);
+			});
+
+			it('Touchend event on .vue-number-input__btn-dec should invoke methods.buttonUpHandler', () => {
+				wrapper.setMethods({ buttonUpHandler: jest.fn() });
+				wrapper.find('.vue-number-input__btn-dec').trigger('touchend');
+				expect(wrapper.vm.buttonUpHandler).toHaveBeenCalled();
 			});
 		});
 	});
