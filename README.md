@@ -94,7 +94,7 @@ For more examples visit **[demo page](https://smwbtech.github.io/vue-number-inpu
 
 #### Your own controls through slot
 
-You can create your own controls and pass them to slots
+You can create your own controls and pass them to slots  
 Read more about slots in [official docs](https://vuejs.org/v2/guide/components-slots.html)
 
 ```html
