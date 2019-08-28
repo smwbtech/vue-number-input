@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.4] - 2019-08-28
 
+### Added
+
+-   Added the recommendation to use v-model directive to interact with the component to README and demo page
+
+## [1.0.4] - 2019-08-28
+
 ### Fixed
 
 -   Touch events on controls: now handled case when user hold the button

@@ -43,12 +43,16 @@ export default {
 };
 ```
 
-Use it in your template
+Use it in your template with v-model directive
 
 ```html
 <template>
 	<div id="app">
-		<VueNumberInput :min="0" :max="100"></VueNumberInput>
+		<VueNumberInput
+			v-model="you_model"
+			:min="0"
+			:max="100"
+		></VueNumberInput>
 	</div>
 </template>
 ```
@@ -87,7 +91,13 @@ You can bind following props for vue-input-number element
 #### Example
 
 ```html
-<vue-number-input :value="50" :min="0" :max="100" :controlsPosition="'left'" />
+<vue-number-input
+	v-model="you_model"
+	:value="50"
+	:min="0"
+	:max="100"
+	:controlsPosition="'left'"
+/>
 ```
 
 For more examples visit **[demo page](https://smwbtech.github.io/vue-number-input/)**
@@ -100,6 +110,7 @@ Read more about slots in [official docs](https://vuejs.org/v2/guide/components-s
 ```html
 <vue-number-input
 	class="custom-container"
+	v-model="you_model"
 	:inputClass="custom-input"
 	:buttonIncClass="custom-btn-inc"
 	:buttonDecClass="custom-btn-dec"

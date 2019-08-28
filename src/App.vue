@@ -280,22 +280,28 @@ export default {
 			eighth: { value: 0 },
 			ninth: { value: 0 },
 			examples: {
-				default: '<vue-number-input :autofocus="true" />',
-				one: '<vue-number-input :value="50" :min="0" :max="100" />',
+				default:
+					'<vue-number-input v-model="you_model" :autofocus="true" />',
+				one:
+					'<vue-number-input v-model="you_model" :value="50" :min="0" :max="100" />',
 				two:
-					'<vue-number-input :value="4.8" :min="0" :max="10" :step="0.1" />',
-				three: '<vue-number-input :controlsPosition="left" />',
-				four: '<vue-number-input :controlsPosition="right" />',
-				five: '<vue-number-input readonly/>',
-				six: '<vue-number-input disabled />',
+					'<vue-number-input v-model="you_model" :value="4.8" :min="0" :max="10" :step="0.1" />',
+				three:
+					'<vue-number-input v-model="you_model" :controlsPosition="left" />',
+				four:
+					'<vue-number-input v-model="you_model" :controlsPosition="right" />',
+				five: '<vue-number-input v-model="you_model" readonly/>',
+				six: '<vue-number-input v-model="you_model" disabled />',
 				seven: `<vue-number-input
 	class="custom-container"
+	v-model="you_model"
 	:inputClass="custom-input"
 	:buttonIncClass="custom-btn-inc"
 	:buttonDecClass="custom-btn-dec"
 />`,
 				eight: `<vue-number-input
 	class="custom-container"
+	v-model="you_model"
 	:inputClass="custom-input"
 	:buttonIncClass="custom-btn-inc"
 	:buttonDecClass="custom-btn-dec"
