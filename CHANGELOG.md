@@ -7,4 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] - 2019-08-28
+
+### Fixed
+
+-   Touch events on controls: now handled case when user hold the button
+-   READMY.md tesx
+
+## [1.0.3] - 2019-08-27
+
+### Fixed
+
+-   README.md: Incorrect component import code example
+
 ## [1.0.0] - 2019-08-26
