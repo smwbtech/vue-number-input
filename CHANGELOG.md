@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.4] - 2019-08-28
+## [1.0.6] - 2019-08-29
+
+### Fixed
+
+-   Mouseleave event handler for buttons, to stop increase or decrease process, when user move mouse out of button element
+
+## [1.0.5] - 2019-08-28
 
 ### Added
 

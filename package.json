@@ -19,7 +19,9 @@
 		"vue number input",
 		"vue numeric input",
 		"vue accessibility",
-		"vue input accessibility"
+		"vue input accessibility",
+		"vue number spinner",
+		"vue numberspinner"
 	],
 	"repository": {
 		"type": "git",
