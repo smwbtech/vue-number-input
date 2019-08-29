@@ -22,6 +22,7 @@
 			@keyup.enter="buttonUpHandler"
 			@touchstart.prevent="buttonDownHandler('dec')"
 			@touchend="buttonUpHandler"
+			@mouseleave="buttonUpHandler"
 		>
 			<slot name="button-decrease">
 				<VueNumberInputButton :type="'dec'" />
@@ -67,6 +68,7 @@
 			@keyup.enter="buttonUpHandler"
 			@touchstart.prevent="buttonDownHandler('inc')"
 			@touchend="buttonUpHandler"
+			@mouseleave="buttonUpHandler"
 		>
 			<slot name="button-increase">
 				<VueNumberInputButton :type="'inc'" />
