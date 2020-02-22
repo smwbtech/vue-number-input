@@ -51,6 +51,7 @@
 			@focus="addEventListeners"
 			@blur="removeEventListeners"
 			@input.prevent="inputHandler"
+			@change="$emit('change', value)"
 		/>
 		<div
 			tabindex="0"
@@ -365,10 +366,9 @@ export default {
 </script>
 
 <style lang="css">
-
 .vue-number-input {
 	position: relative;
-    display: flex;
+	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	border: 1px solid #eee;
@@ -433,10 +433,8 @@ export default {
 	}
 
 	&.vue-number-input_on-left {
-
 		& .vue-number-input__input {
 			margin-left: 20%;
-
 		}
 
 		& .vue-number-input__btn-dec,
@@ -446,10 +444,8 @@ export default {
 	}
 
 	&.vue-number-input_on-right {
-
 		& .vue-number-input__input {
 			margin-right: 20%;
-
 		}
 
 		& .vue-number-input__btn-dec,
@@ -457,7 +453,5 @@ export default {
 			right: 0;
 		}
 	}
-
-
 } /* end vue-num-inp*/
 </style>

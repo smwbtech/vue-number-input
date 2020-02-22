@@ -4,6 +4,7 @@
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/smwbtech/vue-flash-message/blob/master/LICENSE.md)
 [![Build Status](https://travis-ci.org/smwbtech/vue-number-input.svg?branch=master)](https://travis-ci.org/smwbtech/vue-number-input)
 [![Coverage Status](https://coveralls.io/repos/github/smwbtech/vue-number-input/badge.svg?branch=master)](https://coveralls.io/github/smwbtech/vue-number-input?branch=master)
+[![Size](https://badgen.net/bundlephobia/minzip/@smartweb/vue-number-input@latest)](https://bundlephobia.com/result?p=@smartweb/vue-number-input@latest)
 
 Vue component for numbers input.
 
@@ -126,6 +127,15 @@ Read more about slots in [official docs](https://vuejs.org/v2/guide/components-s
 	</template>
 </vue-number-input>
 ```
+
+### Events
+
+|   Event    |                       Description                        |   Params   |
+| :--------: | :------------------------------------------------------: | :--------: |
+| **input**  |        Triggered on user input or buttons clicks         |   Number   |
+| **change** | Triggered on value changed and focus leave input element |   Number   |
+| **focus**  |        Triggered when user focused on input field        | FocusEvent |
+|  **blur**  |          Triggered when focus leave input field          | FocusEvent |
 
 ## LICENSE
 
