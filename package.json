@@ -4,8 +4,6 @@
 	"main": "./build/vue-number-input.common.js",
 	"unpkg": "./build/vue-number-input.umd.min.js",
 	"files": [
-		"build/*",
-		"build/*.json",
 		"build/*.js"
 	],
 	"description": "Vue number input component with great accessibility: ARIA, control by keyboard and wheel",
@@ -39,12 +37,14 @@
 	},
 	"scripts": {
 		"serve": "vue-cli-service serve",
-		"build": "vue-cli-service build",
+		"build": "cross-env NODE_ENV=build vue-cli-service build",
 		"lint": "vue-cli-service lint",
 		"test:unit": "vue-cli-service test:unit --verbose",
-		"lib": "cross-env NODE_ENV=production vue-cli-service build --mode production -g envify --target lib --name vue-number-input ./src/components/wrapper.js --dest ./build"
+		"build:lib": "cross-env NODE_ENV=production vue-cli-service build --mode production -g envify --target lib --name vue-number-input ./src/components/wrapper.js --dest ./build"
 	},
 	"devDependencies": {
+		"@babel/plugin-transform-runtime": "^7.8.3",
+		"@vue/babel-preset-app": "^4.2.2",
 		"@vue/cli-plugin-babel": "^3.11.0",
 		"@vue/cli-plugin-eslint": "^3.11.0",
 		"@vue/cli-plugin-unit-jest": "^3.11.0",
@@ -53,7 +53,12 @@
 		"@vue/test-utils": "1.0.0-beta.29",
 		"babel-core": "7.0.0-bridge.0",
 		"babel-eslint": "^10.0.1",
+		"babel-helper-vue-jsx-merge-props": "^2.0.3",
 		"babel-jest": "^23.6.0",
+		"babel-plugin-syntax-jsx": "^6.18.0",
+		"babel-plugin-transform-vue-jsx": "^3.7.0",
+		"babel-preset-env": "^1.7.0",
+		"babel-preset-minify": "^0.5.1",
 		"core-js": "^2.6.5",
 		"coveralls": "^3.0.6",
 		"cross-env": "^5.2.0",
