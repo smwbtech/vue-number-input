@@ -8,6 +8,5 @@ module.exports = {
 		mode: 'production',
 		plugins: [new TerserPlugin()]
 	},
-	publicPath:
-		process.env.NODE_ENV === 'production' ? '/vue-number-input/' : '/'
+	publicPath: process.env.NODE_ENV === 'build' ? '/vue-number-input/' : '/'
 };
