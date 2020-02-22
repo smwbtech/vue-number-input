@@ -1,6 +1,6 @@
 {
 	"name": "@smartweb/vue-number-input",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"main": "./build/vue-number-input.common.js",
 	"unpkg": "./build/vue-number-input.umd.min.js",
 	"files": [
